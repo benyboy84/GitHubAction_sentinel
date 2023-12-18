@@ -1,5 +1,6 @@
 name: "Sentinel GitHub Actions"
 description: "Runs Sentinel commands via GitHub Actions."
+author: "HashiCorp, Inc. Sentinel Team <Sentinel@hashicorp.com>"
 branding:
   icon: "terminal"
   color: "blue"
