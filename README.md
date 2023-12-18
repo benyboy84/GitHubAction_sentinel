@@ -51,7 +51,7 @@ An exit code of `0` is considered a successful execution.
 
 * `stl_actions_working_dir`
 
-The working directory to change into before executing Sentinel subcommands. Defaults to `.` which means use the root of the GitHub repository.
+  The working directory to change into before executing Sentinel subcommands. Defaults to `.` which means use the root of the GitHub repository.
 
   - type: string
   - Optional
