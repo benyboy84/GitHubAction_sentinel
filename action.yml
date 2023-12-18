@@ -1,9 +1,7 @@
 name: "Sentinel GitHub Actions"
 description: "Runs Sentinel commands via GitHub Actions."
-author: "HashiCorp, Inc. Sentinel Team <Sentinel@hashicorp.com>"
-branding:
-  icon: "terminal"
-  color: "blue"
+author: 'Benoit Blais'
+
 inputs:
   stl_actions_subcommand:
     description: "Sentinel subcommand to execute."
@@ -17,9 +15,19 @@ inputs:
   stl_actions_working_dir:
     description: "Sentinel working directory."
     default: "."
+
 outputs:
   stl_actions_output:
     description: "The Sentinel outputs."
+
 runs:
-  using: "docker"
-  image: "./Dockerfile"
+  using: "composite"
+  steps:
+    - id: bashscript
+      shell: bash
+      run: bash ${{ github.action_path }}/main.sh
+      env:
+        INPUT_STL_ACTIONS_SUBCOMMAND: ${{ inputs.stl_actions_subcommand }}
+        INPUT_STL_ACTIONS_VERSION: ${{ inputs.stl_actions_version }}
+        INPUT_STL_ACTIONS_COMMENT: ${{ inputs.stl_actions_comment }}
+        INPUT_STL_ACTIONS_WORKING_DIR: ${{ inputs.stl_actions_working_dir }}
