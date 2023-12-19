@@ -86,34 +86,33 @@ if [[ "$INPUT_COMMAND" == 'fmt' ]]; then
   fmtParseError=()
   fmtCheckError=()
   policies=$(find . -maxdepth 1 -name "*.sentinel")
-  ls -l
   for file in $policies
     do
-      echo "$(basename ${file})"
       basename="$(basename ${file})"
       echo "INFO     | Checking if Sentinel files $basename is correctly formatted"
       fmtOutput=$(sentinel fmt -check=true -write=false allowed-providers.sentinel 2>&1)
       exit_code=${?}
-      # Exit code of 0 indicates success. Print the output and exit.
+      # Exit code of 0 indicates success.
       if [ ${exit_code} -eq 0 ]; then
         echo "INFO     | Sentinel files in $basename is correctly formatted"
         echo "${fmtOutput}"
       fi
-      # Exit code of 2 indicates a parse error. Print the output and exit.
-      if [ ${exit_code} -eq 2 ]; then
+      # Exit code of 1 indicates a parse error.
+      if [ ${exit_code} -eq 1 ]; then
         echo "ERROR    | Failed to parse Sentinel file $basename"
         echo "${fmtOutput}"
-        fmtParseError+="$basename"
+        fmtParseError+=("$basename")
       fi
-      # Exit code of !0 and !2 indicates failure.
-      if [[ ${exit_code} -ne 0 && ${exit_code} -ne 2 ]]; then
+      # Exit code of 2 indicates that file is incorrectly formatted..
+      if [ ${exit_code} -eq 2 ]; then
         echo "ERROR    | Sentinel files $basename is incorrectly formatted"
         echo "${fmtOutput}"
-        fmtCheckError+="$basename"
+        fmtCheckError+=("$basename")
       fi
   done
 
-
+  echo "fmtParseError:$fmtParseError"
+  echo "fmtCheckError:$fmtCheckError"
 
 
 #       # Exit code of 2 indicates a parse error. Print the output and exit.
