@@ -81,6 +81,8 @@ if [ "${?}" -ne 0 ]; then
 fi
 echo "INFO     | Successfully unzipped Sentinel v${version}"
 
+echo "${WorkingDir}/*.sentinel"
+
 if [[ "$INPUT_COMMAND" == 'fmt' ]]; then
   # Gather the output of `sentinel fmt`.
   fmtParseError=()
