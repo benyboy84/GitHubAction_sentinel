@@ -8,12 +8,15 @@ inputs:
     required: true
   version:
     description: "Sentinel version to install."
+    required: false
     default: latest
   comment:
     description: "Whether or not to comment on pull requests."
+    required: false
     default: true
   working_dir:
     description: "Sentinel working directory."
+    required: false
     default: "."
 
 outputs:

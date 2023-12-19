@@ -27,6 +27,13 @@ fi
 
 # Optional inputs
 
+# Validate input version.
+if [[ -n "$INPUT_VERSION" ]]; then
+  version=$INPUT_VERSION
+else
+  version="latest"
+fi
+
 # Validate input comment.
 if [[ ! "$INPUT_COMMENT" =~ ^(true|false)$ ]]; then
     echo "ERROR    | Unsupported command \"$INPUT_COMMENT\" for input \"comment\". Valid values are \"true\" or \"false\"."
@@ -38,7 +45,7 @@ WorkingDir="."
 if [[ -n "$INPUT_WORKING_DIR" ]]; then
     if [[ -d "$INPUT_WORKING_DIR" || -f "$INPUT_WORKING_DIR" ]]; then
         WorkingDir=$INPUT_WORKING_DIR
-        cd ${$WorkingDir}
+        cd $WorkingDir
     else
         exit_code=1
         echo "ERROR    | Working directory does not exist: \"$INPUT_WORKING_DIR\"."
@@ -58,13 +65,13 @@ fi
 
 url="https://releases.hashicorp.com/sentinel/${stlVersion}/sentinel_${stlVersion}_linux_amd64.zip"
 
-echo "INFO     | Downloading Sentinel v${stlVersion}"
+echo "INFO     | Downloading Sentinel ${stlVersion}"
 curl -s -S -L -o /tmp/sentinel_${stlVersion} ${url}
 if [ "${?}" -ne 0 ]; then
-  echo "ERROR    | Failed to download Sentinel v${stlVersion}"
+  echo "ERROR    | Failed to download Sentinel ${stlVersion}"
   exit 1
 fi
-echo "INFO     | Successfully downloaded Sentinel v${stlVersion}"
+echo "INFO     | Successfully downloaded Sentinel ${stlVersion}"
 
 echo "INFO     | Unzipping Sentinel v${stlVersion}"
 unzip -d /usr/local/bin /tmp/sentinel_${stlVersion} &> /dev/null

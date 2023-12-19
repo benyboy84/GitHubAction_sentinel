@@ -12,19 +12,19 @@ An exit code of `0` is considered a successful execution.
 
 ## Inputs
 
-* `stl_actions_subcommand`
+* `command`
 
-  The Sentinel subcommand to execute. Valid values are `fmt` and `test`.
+  The Sentinel command to execute. Valid values are `fmt` and `test`.
 
   - type: string
   - Required
 
   ```yaml
   with:
-    stl_actions_subcommand: test
+    command: test
   ```
 
-* `stl_actions_version`
+* `version`
 
   The Sentinel version to install and execute. If set to `latest`, the latest stable version will be used.
 
@@ -34,10 +34,10 @@ An exit code of `0` is considered a successful execution.
 
   ```yaml
   with:
-    stl_actions_version: latest
+    version: latest
   ```
 
-* `stl_actions_comment`
+* `comment`
 
   Whether or not to comment on GitHub pull requests. Defaults to `true`.
 
@@ -47,10 +47,10 @@ An exit code of `0` is considered a successful execution.
 
   ```yaml
   with:
-    stl_actions_comment: false
+    comment: false
   ```
 
-* `stl_actions_working_dir`
+* `working_dir`
 
   The working directory to change into before executing Sentinel subcommands. Defaults to `.` which means use the root of the GitHub repository.
 
@@ -60,12 +60,12 @@ An exit code of `0` is considered a successful execution.
 
   ```yaml
   with:
-    stl_actions_working_dir: ./policies
+    working_dir: ./policies
   ```
 
 ## Outputs
 
-* `stl_actions_output`
+* `output`
 
   The Sentinel outputs.
 
@@ -104,17 +104,17 @@ jobs:
       - name: 'Checkout'
         uses: actions/checkout@master
       - name: 'Sentinel Format'
-        uses: benyboy84/GitHubAction_Sentinel@main
+        uses: benyboy84/GitHubAction_Sentinel@v1
         with:
-          stl_actions_version: latest
-          stl_actions_subcommand: 'fmt'
-          stl_actions_working_dir: '.'
-          stl_actions_comment: true
+          version: latest
+          command: 'fmt'
+          working_dir: '.'
+          comment: true
       - name: 'Sentinel Test'
-        uses: benyboy84/GitHubAction_Sentinel@main
+        uses: benyboy84/GitHubAction_Sentinel@v1
         with:
-          stl_actions_version: latest
-          stl_actions_subcommand: 'test'
-          stl_actions_working_dir: '.'
-          stl_actions_comment: true
+          version: latest
+          command: 'test'
+          working_dir: '.'
+          comment: true
 ```
