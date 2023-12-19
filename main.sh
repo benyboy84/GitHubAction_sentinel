@@ -74,8 +74,7 @@ fi
 echo "INFO     | Successfully downloaded Sentinel v${version}"
 
 echo "INFO     | Unzipping Sentinel v${version}"
-unzip -d /usr/local/bin /tmp/sentinel_${version}
-# unzip -d /usr/local/bin /tmp/sentinel_${version} &> /dev/null
+unzip -d /usr/local/bin /tmp/sentinel_${version} &> /dev/null
 if [ "${?}" -ne 0 ]; then
   echo "ERROR    | Failed to unzip Sentinel v${version}"
   exit 1
@@ -86,7 +85,8 @@ if [[ "$INPUT_COMMAND" == 'fmt' ]]; then
   # Gather the output of `sentinel fmt`.
   fmtParseError=()
   fmtCheckError=()
-  for file in "${WorkingDir}/*.sentinel"
+  for file in ${WorkingDir}/*.sentinel
+  echo "$(basename ${file})"
     do 
       echo "INFO     | Checking if Sentinel files $(basename ${file}) is correctly formatted"
       fmtOutput=$(sentinel fmt -check=true -write=false $(basename ${file}) 2>&1)
