@@ -103,7 +103,7 @@ if [[ "$INPUT_COMMAND" == 'fmt' ]]; then
         fmtParseError+="$(basename ${file})"
       fi
       # Exit code of !0 and !2 indicates failure.
-      if [[ ${exit_code} -ne 0 && ${exit_code} -ne 2 ]]
+      if [[ ${exit_code} -ne 0 && ${exit_code} -ne 2 ]]; then
         echo "ERROR    | Sentinel files $(basename ${file}) is incorrectly formatted"
         echo "${fmtOutput}"
         fmtCheckError+="$(basename ${file})"
