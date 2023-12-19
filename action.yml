@@ -19,10 +19,6 @@ inputs:
     required: false
     default: "."
 
-outputs:
-  output:
-    description: "The Sentinel outputs."
-
 runs:
   using: "composite"
   steps:

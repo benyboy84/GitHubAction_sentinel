@@ -63,12 +63,6 @@ An exit code of `0` is considered a successful execution.
     working_dir: ./policies
   ```
 
-## Outputs
-
-* `output`
-
-  The Sentinel outputs.
-
 ## Environment Variables
 
 * `GITHUB_TOKEN`

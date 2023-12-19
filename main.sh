@@ -84,50 +84,67 @@ echo "INFO     | Successfully unzipped Sentinel v${version}"
 
 if [[ "$INPUT_COMMAND" == 'fmt' ]]; then
   # Gather the output of `sentinel fmt`.
-  echo "INFO     | Checking if Sentinel files in ${WorkingDir} are correctly formatted"
-  fmtOutput=$(sentinel fmt -check=true -write=false ${*} 2>&1)
-  exit_code=${?}
+  fmtParseError=()
+  fmtCheckError=()
+  for file in "${WorkingDir}/*.sentinel"
+    do 
+      echo "INFO     | Checking if Sentinel files $(basename ${file}) is correctly formatted"
+      fmtOutput=$(sentinel fmt -check=true -write=false $(basename ${file}) 2>&1)
+      exit_code=${?}
+      # Exit code of 0 indicates success. Print the output and exit.
+      if [ ${exit_code} -eq 0 ]; then
+        echo "INFO     | Sentinel files in $(basename ${file}) is correctly formatted"
+        echo "${fmtOutput}"
+      fi
+      # Exit code of 2 indicates a parse error. Print the output and exit.
+      if [ ${exit_code} -eq 2 ]; then
+        echo "ERROR    | Failed to parse Sentinel file $(basename ${file})"
+        echo "${fmtOutput}"
+        fmtParseError+="$(basename ${file})"
+      fi
+      # Exit code of !0 and !2 indicates failure.
+      if [[ ${exit_code} -ne 0 && ${exit_code} -ne 2 ]]
+        echo "ERROR    | Sentinel files $(basename ${file}) is incorrectly formatted"
+        echo "${fmtOutput}"
+        fmtCheckError+="$(basename ${file})"
+      fi
+  done
 
-  # Output informations for future use.
-  echo "output=$fmtOutput" >> $GITHUB_OUTPUT
 
-  # Exit code of 0 indicates success. Print the output and exit.
-  if [ ${exit_code} -eq 0 ]; then
-    echo "INFO     | Sentinel files in ${WorkingDir} are correctly formatted"
-    echo "${fmtOutput}"
-  fi
 
-  # Exit code of 2 indicates a parse error. Print the output and exit.
-  if [ ${exit_code} -eq 2 ]; then
-    echo "ERROR    | Failed to parse Sentinel files"
-    echo "${fmtOutput}"
-    pr_comment="### GitHub Action Sentinel
-<details><summary>Show Output</summary>
-<p>
-$fmtOutput
-</p>
-</details>"
-  pr_comment_wrapper=$(stripColors "${pr_comment}")
-  fi
 
-  # Exit code of !0 and !2 indicates failure.
-  echo "ERROR    | Sentinel files in ${WorkingDir} are incorrectly formatted"
-  echo "${fmtOutput}"
-  echo "ERROR    | The following files in ${WorkingDir} are incorrectly formatted"
-  fmtFileList=$(sentinel fmt -check=true -write=false ${WorkingDir})
-  echo "${fmtFileList}"
+#       # Exit code of 2 indicates a parse error. Print the output and exit.
+#       if [ ${exit_code} -eq 2 ]; then
+#         echo "ERROR    | Failed to parse Sentinel files"
+#         echo "${fmtOutput}"
+#         pr_comment="### GitHub Action Sentinel
+# <details><summary>Show Output</summary>
+# <p>
+# $fmtOutput
+# </p>
+# </details>"
+#       pr_comment_wrapper=$(stripColors "${pr_comment}")
+#       fi
 
-  pr_comment="### GitHub Action Sentinel"
-  for file in ${fmtFileList}; do
-    fmtFileDiff=$(sentinel fmt -write=false "${file}" | sed -n '/@@.*/,//{/@@.*/d;p}')
-    pr_comment="${pr_comment}
-<details><summary><code>${WorkingDir}/${file}</code></summary>
-\`\`\`diff
-${fmtFileDiff}
-\`\`\`
-</details>"
-    done
-    pr_comment_wrapper=$(stripColors "${pr_comment}")
+
+#   # Exit code of !0 and !2 indicates failure.
+#   echo "ERROR    | Sentinel files in ${WorkingDir} are incorrectly formatted"
+#   echo "${fmtOutput}"
+#   echo "ERROR    | The following files in ${WorkingDir} are incorrectly formatted"
+#   fmtFileList=$(sentinel fmt -check=true -write=false ${WorkingDir})
+#   echo "${fmtFileList}"
+
+#   pr_comment="### GitHub Action Sentinel"
+#   for file in ${fmtFileList}; do
+#     fmtFileDiff=$(sentinel fmt -write=false "${file}" | sed -n '/@@.*/,//{/@@.*/d;p}')
+#     pr_comment="${pr_comment}
+# <details><summary><code>${WorkingDir}/${file}</code></summary>
+# \`\`\`diff
+# ${fmtFileDiff}
+# \`\`\`
+# </details>"
+#     done
+#     pr_comment_wrapper=$(stripColors "${pr_comment}")
 
 else
 
