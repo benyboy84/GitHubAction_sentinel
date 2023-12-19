@@ -81,13 +81,12 @@ if [ "${?}" -ne 0 ]; then
 fi
 echo "INFO     | Successfully unzipped Sentinel v${version}"
 
-echo "${WorkingDir}/*.sentinel"
-
 if [[ "$INPUT_COMMAND" == 'fmt' ]]; then
   # Gather the output of `sentinel fmt`.
   fmtParseError=()
   fmtCheckError=()
   policies=$(find . -maxdepth 1 -name "*.sentinel")
+  ls -l
   for file in $policies
     do
       echo "$(basename ${file})"
