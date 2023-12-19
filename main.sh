@@ -87,7 +87,8 @@ if [[ "$INPUT_COMMAND" == 'fmt' ]]; then
   # Gather the output of `sentinel fmt`.
   fmtParseError=()
   fmtCheckError=()
-  for file in ${WorkingDir}/*.sentinel
+  policies=$(find . -maxdepth 1 -name "*.sentinel")
+  for file in $policies
     do
       echo "$(basename ${file})"
       echo "INFO     | Checking if Sentinel files $(basename ${file}) is correctly formatted"
