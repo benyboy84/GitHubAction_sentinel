@@ -3,21 +3,21 @@ description: "Runs Sentinel commands via GitHub Actions."
 author: 'Benoit Blais'
 
 inputs:
-  stl_actions_subcommand:
-    description: "Sentinel subcommand to execute."
+  command:
+    description: "Sentinel command to execute."
     required: true
-  stl_actions_version:
+  version:
     description: "Sentinel version to install."
-    required: true
-  stl_actions_comment:
+    default: latest
+  comment:
     description: "Whether or not to comment on pull requests."
     default: true
-  stl_actions_working_dir:
+  working_dir:
     description: "Sentinel working directory."
     default: "."
 
 outputs:
-  stl_actions_output:
+  output:
     description: "The Sentinel outputs."
 
 runs:
@@ -27,7 +27,7 @@ runs:
       shell: bash
       run: bash ${{ github.action_path }}/main.sh
       env:
-        INPUT_STL_ACTIONS_SUBCOMMAND: ${{ inputs.stl_actions_subcommand }}
-        INPUT_STL_ACTIONS_VERSION: ${{ inputs.stl_actions_version }}
-        INPUT_STL_ACTIONS_COMMENT: ${{ inputs.stl_actions_comment }}
-        INPUT_STL_ACTIONS_WORKING_DIR: ${{ inputs.stl_actions_working_dir }}
+        INPUT_COMMAND: ${{ inputs.command }}
+        INPUT_VERSION: ${{ inputs.version }}
+        INPUT_COMMENT: ${{ inputs.comment }}
+        INPUT_WORKING_DIR: ${{ inputs.working_dir }}

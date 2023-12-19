@@ -29,7 +29,8 @@ An exit code of `0` is considered a successful execution.
   The Sentinel version to install and execute. If set to `latest`, the latest stable version will be used.
 
   - type: string
-  - Required
+  - Optional
+  - Default: latest
 
   ```yaml
   with:
