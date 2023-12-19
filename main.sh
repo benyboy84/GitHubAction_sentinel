@@ -65,27 +65,27 @@ fi
 
 url="https://releases.hashicorp.com/sentinel/${version}/sentinel_${version}_linux_amd64.zip"
 
-echo "INFO     | Downloading Sentinel ${version}"
-curl -S -L -o /tmp/sentinel_${version} ${url}
+echo "INFO     | Downloading Sentinel v${version}"
+curl -s -S -L -o /tmp/sentinel_${version} ${url}
 if [ "${?}" -ne 0 ]; then
-  echo "ERROR    | Failed to download Sentinel ${version}"
+  echo "ERROR    | Failed to download Sentinel v${version}"
   exit 1
 fi
-echo "INFO     | Successfully downloaded Sentinel ${version}"
+echo "INFO     | Successfully downloaded Sentinel v${version}"
 
-echo "INFO     | Unzipping Sentinel ${version}"
+echo "INFO     | Unzipping Sentinel v${version}"
 unzip -d /usr/local/bin /tmp/sentinel_${version}
 # unzip -d /usr/local/bin /tmp/sentinel_${version} &> /dev/null
 if [ "${?}" -ne 0 ]; then
-  echo "ERROR    | Failed to unzip Sentinel ${version}"
+  echo "ERROR    | Failed to unzip Sentinel v${version}"
   exit 1
 fi
-echo "INFO     | Successfully unzipped Sentinel ${version}"
+echo "INFO     | Successfully unzipped Sentinel v${version}"
 
 if [[ "$INPUT_COMMAND" == 'fmt' ]]; then
   # Gather the output of `sentinel fmt`.
   echo "INFO     | Checking if Sentinel files in ${WorkingDir} are correctly formatted"
-  fmtOutput=$(sentinel fmt -check=true -write=false 2>&1)
+  fmtOutput=$(sentinel fmt -check=true -write=false ${*} 2>&1)
   exit_code=${?}
 
   # Output informations for future use.
