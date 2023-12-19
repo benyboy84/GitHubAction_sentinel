@@ -100,7 +100,7 @@ if [[ "$INPUT_COMMAND" == 'fmt' ]]; then
     fi
       # Exit code of 2 indicates that file is incorrectly formatted.
     if [ $exit_code -eq 2 ]; then
-      echo "ERROR    | Sentinel files $basename is incorrectly formatted"
+      echo "ERROR    | Sentinel file $basename is incorrectly formatted"
       echo "${fmtOutput}"
       fmtCheckError+=("$basename")
     fi
@@ -112,13 +112,24 @@ if [[ "$INPUT_COMMAND" == 'fmt' ]]; then
     echo "success"
   else
     exit_code=1
-    echo "failure"
     pr_comment="### GitHub Action Sentinel"
     if [[ ${#fmtParseError[@]} -ne 0 ]]; then
       pr_comment="${pr_comment}
-Failed to parse Sentinel file:
+Failed to parse Sentinel files:
 <details><summary>Show Output</summary>"
       for file in $fmtParseError
+        do
+          pr_comment="${pr_comment}
+${file}"
+      done
+      pr_comment="${pr_comment}
+</details>"
+    fi
+    if [[ ${#fmtCheckError[@]} -ne 0 ]]; then
+      pr_comment="${pr_comment}
+Sentinel files are incorrectly formatted:
+<details><summary>Show Output</summary>"
+      for file in $fmtCheckError
         do
           pr_comment="${pr_comment}
 ${file}"
