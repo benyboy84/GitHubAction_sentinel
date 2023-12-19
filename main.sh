@@ -86,8 +86,8 @@ if [[ "$INPUT_COMMAND" == 'fmt' ]]; then
   fmtParseError=()
   fmtCheckError=()
   for file in ${WorkingDir}/*.sentinel
-  echo "$(basename ${file})"
-    do 
+    do
+      echo "$(basename ${file})"
       echo "INFO     | Checking if Sentinel files $(basename ${file}) is correctly formatted"
       fmtOutput=$(sentinel fmt -check=true -write=false $(basename ${file}) 2>&1)
       exit_code=${?}
