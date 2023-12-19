@@ -74,6 +74,7 @@ fi
 echo "INFO     | Successfully downloaded Sentinel ${version}"
 
 echo "INFO     | Unzipping Sentinel ${version}"
+ls -l /tmp/sentinel_${version}
 unzip -d /usr/local/bin /tmp/sentinel_${version}
 # unzip -d /usr/local/bin /tmp/sentinel_${version} &> /dev/null
 if [ "${?}" -ne 0 ]; then
