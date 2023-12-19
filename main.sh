@@ -53,7 +53,7 @@ if [[ -n "$INPUT_WORKING_DIR" ]]; then
     fi
 fi
 
-if [[ "${ersion}" == "latest" ]]; then
+if [[ "${version}" == "latest" ]]; then
   echo "INFO     | Checking the latest version of Sentinel"
   version=$(curl -sL https://releases.hashicorp.com/sentinel/index.json | jq -r '.versions[].version' | grep -v '[-].*' | sort -rV | head -n 1)
 
@@ -66,7 +66,7 @@ fi
 url="https://releases.hashicorp.com/sentinel/${version}/sentinel_${version}_linux_amd64.zip"
 
 echo "INFO     | Downloading Sentinel ${version}"
-curl -s -S -L -o /tmp/sentinel_${version} ${url}
+curl -S -L -o /tmp/sentinel_${version} ${url}
 if [ "${?}" -ne 0 ]; then
   echo "ERROR    | Failed to download Sentinel ${version}"
   exit 1
@@ -74,7 +74,6 @@ fi
 echo "INFO     | Successfully downloaded Sentinel ${version}"
 
 echo "INFO     | Unzipping Sentinel ${version}"
-ls -l /tmp/sentinel_${version}
 unzip -d /usr/local/bin /tmp/sentinel_${version}
 # unzip -d /usr/local/bin /tmp/sentinel_${version} &> /dev/null
 if [ "${?}" -ne 0 ]; then
