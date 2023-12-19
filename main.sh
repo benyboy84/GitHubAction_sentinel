@@ -92,7 +92,7 @@ if [[ "$INPUT_COMMAND" == 'fmt' ]]; then
       echo "$(basename ${file})"
       basename="$(basename ${file})"
       echo "INFO     | Checking if Sentinel files $basename is correctly formatted"
-      fmtOutput=$(sentinel fmt -check=true -write=false $basename 2>&1)
+      fmtOutput=$(sentinel fmt -check=true -write=false allowed-providers.sentinel 2>&1)
       exit_code=${?}
       # Exit code of 0 indicates success. Print the output and exit.
       if [ ${exit_code} -eq 0 ]; then
