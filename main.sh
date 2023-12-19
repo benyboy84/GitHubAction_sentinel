@@ -73,13 +73,14 @@ if [ "${?}" -ne 0 ]; then
 fi
 echo "INFO     | Successfully downloaded Sentinel ${version}"
 
-echo "INFO     | Unzipping Sentinel v${version}"
-unzip -d /usr/local/bin /tmp/sentinel_${version} &> /dev/null
+echo "INFO     | Unzipping Sentinel ${version}"
+unzip -d /usr/local/bin /tmp/sentinel_${version}
+# unzip -d /usr/local/bin /tmp/sentinel_${version} &> /dev/null
 if [ "${?}" -ne 0 ]; then
-  echo "ERROR    | Failed to unzip Sentinel v${version}"
+  echo "ERROR    | Failed to unzip Sentinel ${version}"
   exit 1
 fi
-echo "INFO     | Successfully unzipped Sentinel v${version}"
+echo "INFO     | Successfully unzipped Sentinel ${version}"
 
 if [[ "$INPUT_COMMAND" == 'fmt' ]]; then
   # Gather the output of `sentinel fmt`.
