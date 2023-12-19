@@ -113,18 +113,19 @@ if [[ "$INPUT_COMMAND" == 'fmt' ]]; then
   else
     exit_code=1
     echo "failure"
-#     pr_comment="### GitHub Action Sentinel"
-#     if [[ ${#fmtParseError[@]} -ne 0 ]]; then
-#       pr_comment="${pr_comment}
-# Failed to parse Sentinel file:
-# <details><summary>Show Output</summary>"
-#       for file in $fmtParseError
-#         do
-#           pr_comment="${pr_comment}
-# ${file}"
-#       done
-#       pr_comment="${pr_comment}
-# </details>"
+    pr_comment="### GitHub Action Sentinel"
+    if [[ ${#fmtParseError[@]} -ne 0 ]]; then
+      pr_comment="${pr_comment}
+Failed to parse Sentinel file:
+<details><summary>Show Output</summary>"
+      for file in $fmtParseError
+        do
+          pr_comment="${pr_comment}
+${file}"
+      done
+      pr_comment="${pr_comment}
+</details>"
+    fi
   fi
 
 
