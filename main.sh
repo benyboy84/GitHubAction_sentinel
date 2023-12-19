@@ -53,33 +53,33 @@ if [[ -n "$INPUT_WORKING_DIR" ]]; then
     fi
 fi
 
-if [[ "${stlVersion}" == "latest" ]]; then
+if [[ "${ersion}" == "latest" ]]; then
   echo "INFO     | Checking the latest version of Sentinel"
-  stlVersion=$(curl -sL https://releases.hashicorp.com/sentinel/index.json | jq -r '.versions[].version' | grep -v '[-].*' | sort -rV | head -n 1)
+  version=$(curl -sL https://releases.hashicorp.com/sentinel/index.json | jq -r '.versions[].version' | grep -v '[-].*' | sort -rV | head -n 1)
 
-  if [[ -z "${stlVersion}" ]]; then
+  if [[ -z "${version}" ]]; then
     echo "ERROR    | Failed to fetch the latest version"
     exit 1
   fi
 fi
 
-url="https://releases.hashicorp.com/sentinel/${stlVersion}/sentinel_${stlVersion}_linux_amd64.zip"
+url="https://releases.hashicorp.com/sentinel/${version}/sentinel_${version}_linux_amd64.zip"
 
-echo "INFO     | Downloading Sentinel ${stlVersion}"
-curl -s -S -L -o /tmp/sentinel_${stlVersion} ${url}
+echo "INFO     | Downloading Sentinel ${version}"
+curl -s -S -L -o /tmp/sentinel_${version} ${url}
 if [ "${?}" -ne 0 ]; then
-  echo "ERROR    | Failed to download Sentinel ${stlVersion}"
+  echo "ERROR    | Failed to download Sentinel ${version}"
   exit 1
 fi
-echo "INFO     | Successfully downloaded Sentinel ${stlVersion}"
+echo "INFO     | Successfully downloaded Sentinel ${version}"
 
-echo "INFO     | Unzipping Sentinel v${stlVersion}"
-unzip -d /usr/local/bin /tmp/sentinel_${stlVersion} &> /dev/null
+echo "INFO     | Unzipping Sentinel v${version}"
+unzip -d /usr/local/bin /tmp/sentinel_${version} &> /dev/null
 if [ "${?}" -ne 0 ]; then
-  echo "ERROR    | Failed to unzip Sentinel v${stlVersion}"
+  echo "ERROR    | Failed to unzip Sentinel v${version}"
   exit 1
 fi
-echo "INFO     | Successfully unzipped Sentinel v${stlVersion}"
+echo "INFO     | Successfully unzipped Sentinel v${version}"
 
 if [[ "$INPUT_COMMAND" == 'fmt' ]]; then
   # Gather the output of `sentinel fmt`.
