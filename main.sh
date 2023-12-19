@@ -13,10 +13,6 @@ IS_ARRAY()
     return 1
 }
 
-function stripColors {
-  echo "${1}" | sed 's/\x1b\[[0-9;]*m//g'
-}
-
 # Required inputs
 
 # Validate input command.
@@ -103,7 +99,7 @@ if [[ "$INPUT_COMMAND" == 'fmt' ]]; then
         echo "${fmtOutput}"
         fmtParseError+=("$basename")
       fi
-      # Exit code of 2 indicates that file is incorrectly formatted..
+      # Exit code of 2 indicates that file is incorrectly formatted.
       if [ ${exit_code} -eq 2 ]; then
         echo "ERROR    | Sentinel files $basename is incorrectly formatted"
         echo "${fmtOutput}"
@@ -111,21 +107,33 @@ if [[ "$INPUT_COMMAND" == 'fmt' ]]; then
       fi
   done
 
-  echo "fmtParseError:$fmtParseError"
-  echo "fmtCheckError:$fmtCheckError"
+  # List empty indicate success.
+  if [[ ${#fmtParseError[@]} -eq 0 && ${#fmtCheckError[@]} -eq 0 ]]; then
+    exit_code=0
+  else
+    exit_code=1
+    pr_comment="### GitHub Action Sentinel"
+    if [[ ${#fmtParseError[@]} -ne 0 ]]; then
+      pr_comment="${pr_comment}
+Failed to parse Sentinel file:
+<details><summary>Show Output</summary>"
+      for file in ${fmtParseError}; do
+         pr_comment="${pr_comment}
+${file}"
+      done
+      pr_comment="${pr_comment}
+</details>"
+  fi
+
+
+
 
 
 #       # Exit code of 2 indicates a parse error. Print the output and exit.
 #       if [ ${exit_code} -eq 2 ]; then
 #         echo "ERROR    | Failed to parse Sentinel files"
 #         echo "${fmtOutput}"
-#         pr_comment="### GitHub Action Sentinel
-# <details><summary>Show Output</summary>
-# <p>
-# $fmtOutput
-# </p>
-# </details>"
-#       pr_comment_wrapper=$(stripColors "${pr_comment}")
+#         
 #       fi
 
 
@@ -215,7 +223,7 @@ if [[ $INPUT_COMMENT == true ]]; then
             fi
             if [[ $exit_code -ne 0 ]]; then
                 # Add comment to pull request.
-                body="$pr_comment_wrapper"
+                body="$pr_comment"
                 pr_payload=$(echo '{}' | jq --arg body "$body" '.body = $body')
                 echo "INFO     | Adding comment to pull request."
                 {
