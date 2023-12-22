@@ -7,7 +7,7 @@ echo "INFO     | Executing Sentinel commands to format code or test policies."
 IS_ARRAY()
 {   # Detect if arg is an array, returns 0 on sucess, 1 otherwise
     [ -z "$1" ] && return 1
-    if [ -n "$BASH" ]; then
+    if [ -n "${BASH}" ]; then
         declare -p ${1} 2> /dev/null | grep 'declare \-a' >/dev/null && return 0
     fi
     return 1
@@ -16,41 +16,41 @@ IS_ARRAY()
 # Optional inputs
 
 # Validate input check.
-if [[ ! "$INPUT_CHECK" =~ ^(true|false)$ ]]; then
-    echo "ERROR    | Unsupported command \"$INPUT_CHECK\" for input \"check\". Valid values are \"true\" or \"false\"."
+if [[ ! "${INPUT_CHECK}" =~ ^(true|false)$ ]]; then
+    echo "ERROR    | Unsupported command \"${INPUT_CHECK}\" for input \"check\". Valid values are \"true\" or \"false\"."
     exit 1
 fi
 
 # Validate input version.
-if [[ -n "$INPUT_VERSION" ]]; then
-  version=$INPUT_VERSION
+if [[ -n "${INPUT_VERSION}" ]]; then
+  version=${INPUT_VERSION}
 else
   version="latest"
 fi
 
 # Validate input comment.
-if [[ ! "$INPUT_COMMENT" =~ ^(true|false)$ ]]; then
-    echo "ERROR    | Unsupported command \"$INPUT_COMMENT\" for input \"comment\". Valid values are \"true\" or \"false\"."
+if [[ ! "${INPUT_COMMENT}" =~ ^(true|false)$ ]]; then
+    echo "ERROR    | Unsupported command \"${INPUT_COMMENT}\" for input \"comment\". Valid values are \"true\" or \"false\"."
     exit 1
 fi
 
 # Validate input working_dir.
 WorkingDir="."
-if [[ -n "$INPUT_WORKING_DIR" ]]; then
-    if [[ -d "$INPUT_WORKING_DIR" || -f "$INPUT_WORKING_DIR" ]]; then
-        WorkingDir=$INPUT_WORKING_DIR
-        cd $WorkingDir
+if [[ -n "${INPUT_WORKING_DIR}" ]]; then
+    if [[ -d "${INPUT_WORKING_DIR}" || -f "${INPUT_WORKING_DIR}" ]]; then
+        WorkingDir=${INPUT_WORKING_DIR}
+        cd ${WorkingDir}
     else
-        echo "ERROR    | Working directory does not exist: \"$INPUT_WORKING_DIR\"."
+        echo "ERROR    | Working directory does not exist: \"${INPUT_WORKING_DIR}\"."
         exit 1
     fi
 fi
 
-if [[ "$version" == "latest" ]]; then
+if [[ "${version}" == "latest" ]]; then
   echo "INFO     | Checking the latest version of Sentinel."
   version=$(curl -sL https://releases.hashicorp.com/sentinel/index.json | jq -r '.versions[].version' | grep -v '[-].*' | sort -rV | head -n 1)
 
-  if [[ -z "$version" ]]; then
+  if [[ -z "${version}" ]]; then
     echo "ERROR    | Failed to fetch the latest version."
     exit 1
   fi
@@ -58,21 +58,21 @@ fi
 
 url="https://releases.hashicorp.com/sentinel/${version}/sentinel_${version_linux_amd64}.zip"
 
-echo "INFO     | Downloading Sentinel v$version."
-curl -s -S -L -o /tmp/sentinel_$version $url
+echo "INFO     | Downloading Sentinel v${version}."
+curl -s -S -L -o /tmp/sentinel_${version} ${url}
 if [ "${?}" -ne 0 ]; then
-  echo "ERROR    | Failed to download Sentinel v$version."
+  echo "ERROR    | Failed to download Sentinel v${version}."
   exit 1
 fi
-echo "INFO     | Successfully downloaded Sentinel v$version."
+echo "INFO     | Successfully downloaded Sentinel v${version}."
 
-echo "INFO     | Unzipping Sentinel v$version."
+echo "INFO     | Unzipping Sentinel v${version}."
 unzip -d /usr/local/bin /tmp/sentinel_${version} &> /dev/null
 if [ "${?}" -ne 0 ]; then
-  echo "ERROR    | Failed to unzip Sentinel v$version."
+  echo "ERROR    | Failed to unzip Sentinel v${version}."
   exit 1
 fi
-echo "INFO     | Successfully unzipped Sentinel v$version."
+echo "INFO     | Successfully unzipped Sentinel v${version}."
 
 
 # Gather the output of `sentinel fmt`.
