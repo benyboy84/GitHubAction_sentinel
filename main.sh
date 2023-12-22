@@ -39,7 +39,7 @@ WorkingDir="."
 if [[ -n "${INPUT_WORKING_DIR}" ]]; then
     if [[ -d "${INPUT_WORKING_DIR}" || -f "${INPUT_WORKING_DIR}" ]]; then
         WorkingDir=${INPUT_WORKING_DIR}
-        cd ${WorkingDir}
+        #cd ${WorkingDir}
     else
         echo "ERROR    | Working directory does not exist: \"${INPUT_WORKING_DIR}\"."
         exit 1
@@ -74,6 +74,8 @@ if [ "${?}" -ne 0 ]; then
 fi
 echo "INFO     | Successfully unzipped Sentinel v${version}."
 
+
+fmtFileList=$(sentinel fmt -check=true -write=false ${WorkingDir})
 
 # Gather the output of `sentinel fmt`.
 fmt_parse_error=()
