@@ -12,16 +12,17 @@ An exit code of `0` is considered a successful execution.
 
 ## Inputs
 
-* `command`
+* `check`
+    
+  By default, fmt checks if the input is properly formatted. If you set it to false, code will be formated in a canonical format.
 
-  The Sentinel command to execute. Valid values are `fmt` and `test`.
-
-  - type: string
-  - Required
+  - Type: boolean
+  - Optional
+  - Default: true
 
   ```yaml
   with:
-    command: test
+    check: false
   ```
 
 * `version`

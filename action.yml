@@ -1,11 +1,13 @@
-name: "Sentinel GitHub Actions"
-description: "Runs Sentinel commands via GitHub Actions."
+name: "Sentinel Format (fmt)"
+description: 'This action uses the `sentinel fmt` command to check that all sentinel files are in the canonical format.'
 author: 'Benoit Blais'
 
 inputs:
-  command:
-    description: "Sentinel command to execute."
-    required: true
+  check:
+    description: 'By default, fmt checks if the input is properly formatted. If you set it to false, code will be formated in a canonical format.'
+    required: false
+    default: true
+    type: bool
   version:
     description: "Sentinel version to install."
     required: false
@@ -26,7 +28,7 @@ runs:
       shell: bash
       run: bash ${{ github.action_path }}/main.sh
       env:
-        INPUT_COMMAND: ${{ inputs.command }}
+        INPUT_CHECK: ${{ inputs.check }}
         INPUT_VERSION: ${{ inputs.version }}
         INPUT_COMMENT: ${{ inputs.comment }}
         INPUT_WORKING_DIR: ${{ inputs.working_dir }}
