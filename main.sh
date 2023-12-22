@@ -76,6 +76,7 @@ echo "INFO     | Successfully unzipped Sentinel v${version}."
 
 
 fmtFileList=$(sentinel fmt -check=true -write=false ${WorkingDir})
+echo "${fmtFileList}"
 
 # Gather the output of `sentinel fmt`.
 fmt_parse_error=()
