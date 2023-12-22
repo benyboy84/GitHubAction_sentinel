@@ -74,10 +74,6 @@ if [ "${?}" -ne 0 ]; then
 fi
 echo "INFO     | Successfully unzipped Sentinel v${version}."
 
-
-fmtFileList=$(sentinel fmt -check=true -write=false ${WorkingDir})
-echo "${fmtFileList}"
-
 # Gather the output of `sentinel fmt`.
 fmt_parse_error=()
 fmt_check_error=()
@@ -134,7 +130,7 @@ if [[ $INPUT_CHECK == false ]]; then
   if [[ ${#fmt_format_error[@]} -ne 0 ]]; then
     pr_comment="$pr_comment
 Failed to format Sentinel files:
-<details><summary>Show Output</summary>"
+<details><summary><code>Show Output</code></summary>"
     for file in $fmt_format_error; do
       pr_comment="$pr_comment
 ${file}"
@@ -145,13 +141,13 @@ ${file}"
   if [[ ${#fmt_format_success[@]} -ne 0 ]]; then
     pr_comment="$pr_comment
 The following files have been formatted:
-<details><summary>Show Output</summary>"
+<details><summary><code>Show Output</code></summary>"
     for file in $fmt_format_success; do
       pr_comment="$pr_comment
 ${file}"
     done
     pr_comment="$pr_comment
-</details>
+</details><br>
 Make sure to perform a 'git pull' to update your local repository."
   fi
 else
@@ -159,7 +155,7 @@ else
   if [[ ${#fmt_parse_error[@]} -ne 0 ]]; then
     pr_comment="$pr_comment
 Failed to parse Sentinel files:
-<details><summary>Show Output</summary>"
+<details><summary><code>Show Output</code></summary>"
     for file in $fmt_parse_error; do
       pr_comment="$pr_comment
 ${file}"
@@ -170,7 +166,7 @@ ${file}"
   if [[ ${#fmt_check_error[@]} -ne 0 ]]; then
     pr_comment="$pr_comment
 Sentinel files are incorrectly formatted:
-<details><summary>Show Output</summary>"
+<details><summary><code>Show Output</code></summary>"
     for file in $fmt_check_error; do
       pr_comment="$pr_comment
 ${file}"
