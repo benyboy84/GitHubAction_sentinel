@@ -41,39 +41,38 @@ if [[ -n "$INPUT_WORKING_DIR" ]]; then
         WorkingDir=$INPUT_WORKING_DIR
         cd $WorkingDir
     else
-        exit_code=1
         echo "ERROR    | Working directory does not exist: \"$INPUT_WORKING_DIR\"."
         exit 1
     fi
 fi
 
-if [[ "${version}" == "latest" ]]; then
+if [[ "$version" == "latest" ]]; then
   echo "INFO     | Checking the latest version of Sentinel."
   version=$(curl -sL https://releases.hashicorp.com/sentinel/index.json | jq -r '.versions[].version' | grep -v '[-].*' | sort -rV | head -n 1)
 
-  if [[ -z "${version}" ]]; then
+  if [[ -z "$version" ]]; then
     echo "ERROR    | Failed to fetch the latest version."
     exit 1
   fi
 fi
 
-url="https://releases.hashicorp.com/sentinel/${version}/sentinel_${version}_linux_amd64.zip"
+url="https://releases.hashicorp.com/sentinel/$version/sentinel_$version_linux_amd64.zip"
 
-echo "INFO     | Downloading Sentinel v${version}."
-curl -s -S -L -o /tmp/sentinel_${version} ${url}
+echo "INFO     | Downloading Sentinel v$version."
+curl -s -S -L -o /tmp/sentinel_$version $url
 if [ "${?}" -ne 0 ]; then
-  echo "ERROR    | Failed to download Sentinel v${version}."
+  echo "ERROR    | Failed to download Sentinel v$version."
   exit 1
 fi
-echo "INFO     | Successfully downloaded Sentinel v${version}."
+echo "INFO     | Successfully downloaded Sentinel v$version."
 
-echo "INFO     | Unzipping Sentinel v${version}."
-unzip -d /usr/local/bin /tmp/sentinel_${version} &> /dev/null
+echo "INFO     | Unzipping Sentinel v$version."
+unzip -d /usr/local/bin /tmp/sentinel_$version &> /dev/null
 if [ "${?}" -ne 0 ]; then
-  echo "ERROR    | Failed to unzip Sentinel v${version}."
+  echo "ERROR    | Failed to unzip Sentinel v$version."
   exit 1
 fi
-echo "INFO     | Successfully unzipped Sentinel v${version}."
+echo "INFO     | Successfully unzipped Sentinel v$version."
 
 
 # Gather the output of `sentinel fmt`.
@@ -81,28 +80,28 @@ fmt_parse_error=()
 fmt_check_error=()
 policies=$(find . -maxdepth 1 -name "*.sentinel")
 for file in $policies; do
-  basename="$(basename ${file})"
+  basename="$(basename $file)"
   echo "INFO     | Checking if Sentinel files $basename is correctly formatted."
   fmt_output=$(sentinel fmt -check=true -write=false $basename 2>&1)
   exit_code=${?}
   # Exit code of 0 indicates success.
   if [ $exit_code -eq 0 ]; then
     echo "INFO     | Sentinel file in $basename is correctly formatted."
-    echo "${fmt_output}"
   fi
   # Exit code of 1 indicates a parse error.
   if [ $exit_code -eq 1 ]; then
     echo "ERROR    | Failed to parse Sentinel file $basename."
-    echo "${fmt_output}"
     fmt_parse_error+=("$basename")
   fi
   # Exit code of 2 indicates that file is incorrectly formatted.
   if [ $exit_code -eq 2 ]; then
     echo "ERROR    | Sentinel file $basename is incorrectly formatted."
-    echo "${fmt_output}"
     fmt_check_error+=("$basename")
   fi
 done
+
+echo "fmt_parse_error = $fmt_parse_error"
+echo "fmt_check_error = $fmt_check_error"
 
 if [[ ${#fmt_parse_error[@]} -ne 0 ]]; then
   # 'fmt_parse_error' not empty indicates  a parse error.
@@ -125,60 +124,58 @@ if [[ $INPUT_CHECK == false ]]; then
     fmt_exit_code=${?}
     if [[ $fmt_exit_code -ne 0 ]]; then
       echo "ERROR    | Failed to format file $basename."
-      echo "${fmt_output}"
-      fmt_format_error=+$file
+      fmt_format_error+=($file)
     else
       echo "INFO     | Sentinel file $basename has been formatted."
-      echo "${fmt_output}"
-      fmt_format_success=+$file
+      fmt_format_success+=($file)
     fi
   done
   pr_comment="### GitHub Action Sentinel"
   if [[ ${#fmt_format_error[@]} -ne 0 ]]; then
-    pr_comment="${pr_comment}
+    pr_comment="$pr_comment
 Failed to format Sentinel files:
 <details><summary>Show Output</summary>"
     for file in $fmt_format_error; do
-      pr_comment="${pr_comment}
+      pr_comment="$pr_comment
 ${file}"
     done
-    pr_comment="${pr_comment}
+    pr_comment="$pr_comment
 </details>"
   fi
   if [[ ${#fmt_format_success[@]} -ne 0 ]]; then
-    pr_comment="${pr_comment}
+    pr_comment="$pr_comment
 The following files have been formatted:
 <details><summary>Show Output</summary>"
     for file in $fmt_format_success; do
-      pr_comment="${pr_comment}
+      pr_comment="$pr_comment
 ${file}"
     done
-    pr_comment="${pr_comment}
+    pr_comment="$pr_comment
 </details>
 Make sure to perform a 'git pull' to update your local repository."
   fi
 else
   pr_comment="### GitHub Action Sentinel"
-  if [[ ${#fmtParseError[@]} -ne 0 ]]; then
-    pr_comment="${pr_comment}
+  if [[ ${#fmt_parse_error[@]} -ne 0 ]]; then
+    pr_comment="$pr_comment
 Failed to parse Sentinel files:
 <details><summary>Show Output</summary>"
-    for file in $fmtParseError; do
-      pr_comment="${pr_comment}
+    for file in $fmt_parse_error; do
+      pr_comment="$pr_comment
 ${file}"
     done
-    pr_comment="${pr_comment}
+    pr_comment="$pr_comment
 </details>"
   fi
-  if [[ ${#fmtCheckError[@]} -ne 0 ]]; then
-    pr_comment="${pr_comment}
+  if [[ ${#fmt_check_error[@]} -ne 0 ]]; then
+    pr_comment="$pr_comment
 Sentinel files are incorrectly formatted:
 <details><summary>Show Output</summary>"
-    for file in $fmtCheckError; do
-      pr_comment="${pr_comment}
+    for file in $fmt_check_error; do
+      pr_comment="$pr_comment
 ${file}"
     done
-    pr_comment="${pr_comment}
+    pr_comment="$pr_comment
 </details>"
   fi
 fi
