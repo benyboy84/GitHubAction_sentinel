@@ -39,7 +39,7 @@ WorkingDir="."
 if [[ -n "${INPUT_WORKING_DIR}" ]]; then
     if [[ -d "${INPUT_WORKING_DIR}" || -f "${INPUT_WORKING_DIR}" ]]; then
         WorkingDir=${INPUT_WORKING_DIR}
-        #cd ${WorkingDir}
+        cd ${WorkingDir}
     else
         echo "ERROR    | Working directory does not exist: \"${INPUT_WORKING_DIR}\"."
         exit 1
