@@ -100,9 +100,6 @@ for file in $policies; do
   fi
 done
 
-echo "fmt_parse_error = $fmt_parse_error"
-echo "fmt_check_error = $fmt_check_error"
-
 if [[ ${#fmt_parse_error[@]} -ne 0 ]]; then
   # 'fmt_parse_error' not empty indicates  a parse error.
   exit_code=1
@@ -118,7 +115,7 @@ fmt_format_error=()
 fmt_format_success=()
 if [[ $INPUT_CHECK == false ]]; then
   echo "INFO     | Sentinel file(s) are being formatted."
-  for file in $fmt_check_erro; do
+  for file in $fmt_check_error; do
     echo "INFO     | Formatting Sentinel file $file"
     fmt_output=$(sentinel fmt -check=false -write=true $file 2>&1)
     fmt_exit_code=${?}
