@@ -56,7 +56,7 @@ if [[ "$version" == "latest" ]]; then
   fi
 fi
 
-url="https://releases.hashicorp.com/sentinel/$version/sentinel_$version_linux_amd64.zip"
+url="https://releases.hashicorp.com/sentinel/${version}/sentinel_${version_linux_amd64}.zip"
 
 echo "INFO     | Downloading Sentinel v$version."
 curl -s -S -L -o /tmp/sentinel_$version $url
@@ -67,7 +67,7 @@ fi
 echo "INFO     | Successfully downloaded Sentinel v$version."
 
 echo "INFO     | Unzipping Sentinel v$version."
-unzip -d "/usr/local/bin /tmp/sentinel_$version" &> /dev/null
+unzip -d /usr/local/bin /tmp/sentinel_${version} &> /dev/null
 if [ "${?}" -ne 0 ]; then
   echo "ERROR    | Failed to unzip Sentinel v$version."
   exit 1
