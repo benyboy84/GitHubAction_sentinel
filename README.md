@@ -1,4 +1,4 @@
-# Sentinel Format (fmt) action 
+# Sentinel Format (fmt) action
 This is one of a suite of Sentinel related actions.
 
 This action uses the `sentinel fmt` command to check that all Sentinel files in a directory are in the canonical format. This can be used to check that files are properly formatted before merging.
