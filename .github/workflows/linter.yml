@@ -39,11 +39,11 @@ jobs:
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # The following linter types will be enabled:
-          # VALIDATE_BASH: false
+          VALIDATE_BASH: true
           # VALIDATE_BASH_EXEC: false
           VALIDATE_GITHUB_ACTIONS: true
           # VALIDATE_JSON: true
-          # VALIDATE_MARKDOWN: true
+          VALIDATE_MARKDOWN: true
           # VALIDATE_POWERSHELL: false
           # VALIDATE_TERRAFORM_TFLINT: false
           # VALIDATE_YAML: true
