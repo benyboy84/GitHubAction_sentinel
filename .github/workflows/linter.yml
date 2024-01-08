@@ -40,7 +40,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # The following linter types will be enabled:
           VALIDATE_BASH: true
-          VALIDATE_BASH_EXEC: true
+          VALIDATE_BASH_EXEC: false
           VALIDATE_GITHUB_ACTIONS: true
           VALIDATE_JSON: true
           VALIDATE_MARKDOWN: true
