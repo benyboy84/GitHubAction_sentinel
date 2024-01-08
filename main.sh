@@ -2,19 +2,6 @@
 
 echo "INFO     | Executing Sentinel commands to format code or test policies."
 
-# check if variable is array, returns 0 on success, 1 otherwise
-# @param: mixed 
-IS_ARRAY()
-{   # Detect if arg is an array, returns 0 on sucess, 1 otherwise
-    [ -z "$1" ] && return 1
-    if [ -n "${BASH}" ]; then
-        declare -p ${1} 2> /dev/null | grep 'declare \-a' >/dev/null && return 0
-    fi
-    return 1
-}
-
-# Optional inputs
-
 # Validate input check.
 if [[ ! "${INPUT_CHECK}" =~ ^(true|false)$ ]]; then
     echo "ERROR    | Unsupported command \"${INPUT_CHECK}\" for input \"check\". Valid values are \"true\" or \"false\"."
@@ -74,7 +61,7 @@ if [ "${?}" -ne 0 ]; then
 fi
 echo "INFO     | Successfully unzipped Sentinel v${version}."
 
-# Gather the output of `sentinel fmt`.
+# Gather the output of `sentinel fmt -check=true -write=false`.
 fmt_parse_error=()
 fmt_check_error=()
 policies=$(find . -maxdepth 1 -name "*.sentinel")
@@ -99,8 +86,9 @@ for file in ${policies}; do
   fi
 done
 
+# Validating errors.
 if [[ ${#fmt_parse_error[@]} -ne 0 ]]; then
-  # 'fmt_parse_error' not empty indicates  a parse error.
+  # 'fmt_parse_error' not empty indicates a parse error.
   exit_code=1
 elif [[ ${#fmt_check_error[@]} -ne 0 ]]; then
   # 'fmt_check_error' not empty indicates that file is incorrectly formatted.
@@ -110,9 +98,10 @@ else
   exit_code=0
 fi
 
+# Gather the output of `sentinel fmt -check=false -write=true`.
 fmt_format_error=()
 fmt_format_success=()
-if [[ ${INPUT_CHECK} == false ]]; then
+if [[ ${INPUT_CHECK} == false && ${#fmt_check_error[@]} -ne 0 && ${#fmt_parse_error[@]} -eq 0 ]]; then
   echo "INFO     | Sentinel file(s) are being formatted."
   for file in ${fmt_check_error}; do
     echo "INFO     | Formatting Sentinel file ${file}"
@@ -126,42 +115,17 @@ if [[ ${INPUT_CHECK} == false ]]; then
       fmt_format_success+=(${file})
     fi
   done
-  pr_comment="### GitHub Action Sentinel"
+  # Validating errors.
   if [[ ${#fmt_format_error[@]} -ne 0 ]]; then
-    pr_comment="${pr_comment}
-Failed to format Sentinel files:
-<details><summary><code>Show Output</code></summary>
-<p>
-
-\`\`\`diff"
-    for file in ${fmt_format_error}; do
-      pr_comment="${pr_comment}
-${file}"
-    done
-    pr_comment="${pr_comment}
-\`\`\`
-</p>
-</details>"
+    # 'fmt_format_error' not empty indicates a formatting error.
+    exit_code=1
   fi
-  if [[ ${#fmt_format_success[@]} -ne 0 ]]; then
-    pr_comment="${pr_comment}
-The following files have been formatted:
-<details><summary><code>Show Output</code></summary>
-<p>
+fi
 
-\`\`\`diff"
-    for file in ${fmt_format_success}; do
-      pr_comment="${pr_comment}
-${file}"
-    done
-    pr_comment="${pr_comment}
-\`\`\`
-</p>
-</details><br>
-Make sure to perform a 'git pull' to update your local repository."
-  fi
-else
-  pr_comment="### GitHub Action Sentinel"
+# Adding comment to pull request.
+if [[ ${INPUT_COMMENT} == true ]]; then
+  # Creating pull request comment.
+  pr_comment="### GitHub Action Sentinel Format"
   if [[ ${#fmt_parse_error[@]} -ne 0 ]]; then
     pr_comment="${pr_comment}
 Failed to parse Sentinel files:
@@ -177,76 +141,89 @@ ${file}"
 \`\`\`
 </p>
 </details>"
-  fi
-  if [[ ${#fmt_check_error[@]} -ne 0 ]]; then
-    pr_comment="${pr_comment}
+  else
+    if [[ ${INPUT_CHECK} == false && ${#fmt_check_error[@]} -ne 0 && ${#fmt_parse_error[@]} -eq 0 ]]; then
+      if [[ ${#fmt_format_error[@]} -ne 0 ]]; then
+        pr_comment="${pr_comment}
+Failed to format Sentinel files:
+<details><summary><code>Show Output</code></summary>
+<p>
+
+\`\`\`diff"
+        for file in ${fmt_format_error}; do
+          pr_comment="${pr_comment}
+    ${file}"
+        done
+        pr_comment="${pr_comment}
+\`\`\`
+</p>
+</details>"
+      fi
+      if [[ ${#fmt_format_success[@]} -ne 0 ]]; then
+        pr_comment="${pr_comment}
+The following files have been formatted:
+<details><summary><code>Show Output</code></summary>
+<p>
+
+\`\`\`diff"
+        for file in ${fmt_format_success}; do
+          pr_comment="${pr_comment}
+    ${file}"
+        done
+        pr_comment="${pr_comment}
+\`\`\`
+</p>
+</details><br>"
+      fi
+    else
+      if [[ ${#fmt_check_error[@]} -ne 0 ]]; then
+        pr_comment="${pr_comment}
 Sentinel files are incorrectly formatted:
 <details><summary><code>Show Output</code></summary>
 <p>
 
 \`\`\`diff"
-    for file in ${fmt_check_error}; do
-      pr_comment="${pr_comment}
-${file}"
-    done
-    pr_comment="${pr_comment}
+        for file in ${fmt_check_error}; do
+          pr_comment="${pr_comment}
+    ${file}"
+        done
+        pr_comment="${pr_comment}
 \`\`\`
 </p>
 </details>"
-  fi
-fi
-
-if [[ $INPUT_COMMENT == true ]]; then
-    #if [[ "$GITHUB_EVENT_NAME" != "push" && "$GITHUB_EVENT_NAME" != "pull_request" && "$GITHUB_EVENT_NAME" != "issue_comment" && "$GITHUB_EVENT_NAME" != "pull_request_review_comment" && "$GITHUB_EVENT_NAME" != "pull_request_target" && "$GITHUB_EVENT_NAME" != "pull_request_review" ]]; then
-    if [[ "$GITHUB_EVENT_NAME" != "pull_request" && "$GITHUB_EVENT_NAME" != "issue_comment" ]]; then
-        echo "WARNING  | $GITHUB_EVENT_NAME event does not relate to a pull request."
-    else
-        if [[ -z GITHUB_TOKEN ]]; then
-            echo "WARNING  | GITHUB_TOKEN not defined. Pull request comment is not possible without a GitHub token."
-        else
-            # Look for an existing pull request comment and delete
-            echo "INFO     | Looking for an existing pull request comment."
-            accept_header="Accept: application/vnd.github.v3+json"
-            auth_header="Authorization: token $GITHUB_TOKEN"
-            content_header="Content-Type: application/json"
-            if [[ "$GITHUB_EVENT_NAME" == "issue_comment" ]]; then
-                pr_comments_url=$(jq -r ".issue.comments_url" "$GITHUB_EVENT_PATH")
-            else
-                pr_comments_url=$(jq -r ".pull_request.comments_url" "$GITHUB_EVENT_PATH")
-            fi
-            # pr_comment_uri=$(jq -r ".repository.issue_comment_url" "$GITHUB_EVENT_PATH" | sed "s|{/number}||g")
-            # pr_comment_id=$(curl -sS -H "$auth_header" -H "$accept_header" -L "$pr_comments_url" | jq '.[] | select(.body|test ("### GitHub Action Sentinel")) | .id')
-            # if [ "$pr_comment_id" ]; then
-            #     if [[ $(IS_ARRAY $pr_comment_id)  -ne 0 ]]; then
-            #         echo "INFO     | Found existing pull request comment: $pr_comment_id. Deleting."
-            #         pr_comment_url="$pr_comment_uri/$pr_comment_id"
-            #         {
-            #             curl -sS -X DELETE -H "$auth_header" -H "$accept_header" -L "$pr_comment_url" > /dev/null
-            #         } ||
-            #         {
-            #             echo "ERROR    | Unable to delete existing comment in pull request."
-            #         }
-            #     else
-            #         echo "WARNING  | Pull request contain many comments with \"### GitHub Action Sentinel\" in the body."
-            #         echo "WARNING  | Existing pull request comments won't be delete."
-            #     fi
-            # else
-            #     echo "INFO     | No existing pull request comment found."
-            # fi
-            if [[ $exit_code -ne 0 ]]; then
-                # Add comment to pull request.
-                body="$pr_comment"
-                pr_payload=$(echo '{}' | jq --arg body "$body" '.body = $body')
-                echo "INFO     | Adding comment to pull request."
-                {
-                    curl -sS -X POST -H "$auth_header" -H "$accept_header" -H "$content_header" -d "$pr_payload" -L "$pr_comments_url" > /dev/null
-                } ||
-                {
-                    echo "ERROR    | Unable to add comment to pull request."
-                }
-            fi
-        fi
+      fi
     fi
+  fi
+
+  #if [[ "${GITHUB_EVENT_NAME}" != "push" && "${GITHUB_EVENT_NAME}" != "pull_request" && "${GITHUB_EVENT_NAME}" != "issue_comment" && "${GITHUB_EVENT_NAME}" != "pull_request_review_comment" && "${GITHUB_EVENT_NAME}" != "pull_request_target" && "${GITHUB_EVENT_NAME}" != "pull_request_review" ]]; then
+  if [[ "${GITHUB_EVENT_NAME}" != "pull_request" && "${GITHUB_EVENT_NAME}" != "issue_comment" ]]; then
+      echo "WARNING  | ${GITHUB_EVENT_NAME} event does not relate to a pull request."
+  else
+      if [[ -z ${GITHUB_TOKEN} ]]; then
+          echo "WARNING  | GITHUB_TOKEN not defined. Pull request comment is not possible without a GitHub token."
+      else
+          accept_header="Accept: application/vnd.github.v3+json"
+          auth_header="Authorization: token $GITHUB_TOKEN"
+          content_header="Content-Type: application/json"
+          if [[ "$GITHUB_EVENT_NAME" == "issue_comment" ]]; then
+              pr_comments_url=$(jq -r ".issue.comments_url" "$GITHUB_EVENT_PATH")
+          else
+              pr_comments_url=$(jq -r ".pull_request.comments_url" "$GITHUB_EVENT_PATH")
+          fi
+          if [[ $exit_code -ne 0 ]]; then
+              # Add comment to pull request.
+              body="${pr_comment}"
+              pr_payload=$(echo '{}' | jq --arg body "${body}" '.body = $body')
+              echo "INFO     | Adding comment to pull request."
+              {
+                  curl -sS -X POST -H "${auth_header}" -H "${accept_header}" -H "${content_header}" -d "${pr_payload}" -L "${pr_comments_url}" > /dev/null
+              } ||
+              {
+                  echo "ERROR    | Unable to add comment to pull request."
+              }
+          fi
+      fi
+  fi
 fi
 
 exit $exit_code 
