@@ -102,16 +102,16 @@ fmt_format_error=()
 fmt_format_success=()
 if [[ ${INPUT_CHECK} == false && ${#fmt_check_error[@]} -ne 0 && ${#fmt_parse_error[@]} -eq 0 ]]; then
   echo "INFO     | Sentinel file(s) are being formatted."
-  for file in ${fmt_check_error[@]}; do
+  for file in "${fmt_check_error[@]}"; do
     echo "INFO     | Formatting Sentinel file ${file}"
     sentinel fmt -check=false -write=true "${file}" 2>&1
     fmt_exit_code=${?}
     if [[ ${fmt_exit_code} -ne 0 ]]; then
       echo "ERROR    | Failed to format file ${file}."
-      fmt_format_error+=(${file})
+      fmt_format_error+=("${file}")
     else
       echo "INFO     | Sentinel file v${file} has been formatted."
-      fmt_format_success+=(${file})
+      fmt_format_success+=("${file}")
     fi
   done
   # Validating errors.
@@ -132,7 +132,7 @@ Failed to parse Sentinel files:
 <p>
 
 \`\`\`diff"
-    for file in ${fmt_parse_error}; do
+    for file in "${fmt_parse_error[@]}"; do
       pr_comment="${pr_comment}
 ${file}"
     done
@@ -149,7 +149,7 @@ Failed to format Sentinel files:
 <p>
 
 \`\`\`diff"
-        for file in ${fmt_format_error}; do
+        for file in "${fmt_format_error[@]}"; do
           pr_comment="${pr_comment}
     ${file}"
         done
@@ -165,7 +165,7 @@ The following files have been formatted:
 <p>
 
 \`\`\`diff"
-        for file in ${fmt_format_success}; do
+        for file in "${fmt_format_success[@]}"; do
           pr_comment="${pr_comment}
     ${file}"
         done
@@ -182,7 +182,7 @@ Sentinel files are incorrectly formatted:
 <p>
 
 \`\`\`diff"
-        for file in ${fmt_check_error}; do
+        for file in "${fmt_check_error[@]}"; do
           pr_comment="${pr_comment}
     ${file}"
         done
@@ -226,7 +226,7 @@ Sentinel files are incorrectly formatted:
 fi
 
 # Exit with the result based on the `check`property
-echo "exitcode=$exit_code" >> $GITHUB_OUTPUT
+echo "exitcode=$exit_code" >> "$GITHUB_OUTPUT"
 if [[ $INPUT_CHECK == true ]]; then
     exit ${exit_code}
 else
