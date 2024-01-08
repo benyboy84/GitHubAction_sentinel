@@ -68,13 +68,13 @@ An exit code of `0` is considered a successful execution.
 
 * `exitcode`
 
-  The exit code of the Sentinel fmt command. 
+  The exit code of the Sentinel fmt command.
 
 ## Environment Variables
 
 * `GITHUB_TOKEN`
 
-  The GitHub authorization token to use to add a comment to a PR. 
+  The GitHub authorization token to use to add a comment to a PR.
   The token provided by GitHub Actions can be used - it can be passed by
   using the `${{ secrets.GITHUB_TOKEN }}` expression, e.g.
 
