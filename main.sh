@@ -54,7 +54,7 @@ echo "INFO     | Successfully downloaded Sentinel v${version}."
 
 echo "INFO     | Unzipping Sentinel v${version}."
 
-if ! unzip -d "/usr/local/bin /tmp/sentinel_${version}"; then
+if ! unzip -d /usr/local/bin "/tmp/sentinel_${version}" &> /dev/null; then
   echo "ERROR    | Failed to unzip Sentinel v${version}."
   exit 1
 fi
@@ -67,7 +67,7 @@ policies=$(find . -maxdepth 1 -name "*.sentinel")
 for file in ${policies}; do
   basename="$(basename "${file}")"
   echo "INFO     | Checking if Sentinel files ${basename} is correctly formatted."
-  fmt_output=$(sentinel fmt -check=true -write=false "${basename}" 2>&1)
+  sentinel fmt -check=true -write=false "${basename}" 2>&1
   exit_code=${?}
   # Exit code of 0 indicates success.
   if [ ${exit_code} -eq 0 ]; then
@@ -102,9 +102,9 @@ fmt_format_error=()
 fmt_format_success=()
 if [[ ${INPUT_CHECK} == false && ${#fmt_check_error[@]} -ne 0 && ${#fmt_parse_error[@]} -eq 0 ]]; then
   echo "INFO     | Sentinel file(s) are being formatted."
-  for file in ${fmt_check_error}; do
+  for file in ${fmt_check_error[@]}; do
     echo "INFO     | Formatting Sentinel file ${file}"
-    fmt_output=$(sentinel fmt -check=false -write=true ${file} 2>&1)
+    sentinel fmt -check=false -write=true "${file}" 2>&1
     fmt_exit_code=${?}
     if [[ ${fmt_exit_code} -ne 0 ]]; then
       echo "ERROR    | Failed to format file ${file}."
