@@ -52,4 +52,4 @@ jobs:
           # linter will report an error when set to true
           ERROR_ON_MISSING_EXEC_BIT: true
           # Exclude README.md file because it is generated
-          FILTER_REGEX_EXCLUDE: README.md
+          # FILTER_REGEX_EXCLUDE: README.md
