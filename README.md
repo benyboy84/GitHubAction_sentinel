@@ -1,10 +1,9 @@
-# Sentinel GitHub Actions
+# Sentinel Format (fmt) action 
+This is one of a suite of Sentinel related actions.
 
-Sentinel GitHub Actions allow you to execute Sentinel commands within GitHub Actions.
+This action uses the `sentinel fmt` command to check that all Sentinel files in a directory are in the canonical format. This can be used to check that files are properly formatted before merging.
 
 The output of the actions can be viewed from the Actions tab in the main repository view. If the actions are executed on a pull request event, a comment may be posted on the pull request.
-
-Sentinel GitHub Actions are a single GitHub Action that executes different Sentinel subcommands depending on the content of the GitHub Actions YAML file.
 
 # Success Criteria
 
@@ -64,6 +63,12 @@ An exit code of `0` is considered a successful execution.
     working_dir: ./policies
   ```
 
+## Outputs
+
+* `exitcode`
+
+  The exit code of the Sentinel fmt command. 
+
 ## Environment Variables
 
 * `GITHUB_TOKEN`
@@ -83,7 +88,7 @@ An exit code of `0` is considered a successful execution.
 
 ## Example usage
 
-The most common workflow is to run `sentinel fmt`, `sentinel test` on all of the Sentinel files in the root of the repository when a pull request is opened or updated. A comment will be posted to the pull request depending on the output of the Sentinel subcommand being executed. This workflow can be configured by adding the following content to the GitHub Actions workflow YAML file.
+The most common workflow is to run `sentinel fmt` on all of the Sentinel files in the root of the repository when a pull request is opened or updated. A comment will be posted to the pull request depending on the output. This workflow can be configured by adding the following content to the GitHub Actions workflow YAML file.
 
 ```yaml
 name: 'Sentinel GitHub Actions'
@@ -99,17 +104,10 @@ jobs:
       - name: 'Checkout'
         uses: actions/checkout@master
       - name: 'Sentinel Format'
-        uses: benyboy84/GitHubAction_Sentinel@v1
+        uses: benyboy84/GitHubAction_sentinel-fmt@v1
         with:
           version: latest
-          command: 'fmt'
-          working_dir: '.'
-          comment: true
-      - name: 'Sentinel Test'
-        uses: benyboy84/GitHubAction_Sentinel@v1
-        with:
-          version: latest
-          command: 'test'
-          working_dir: '.'
+          check: false
+          working_dir: "./policies"
           comment: true
 ```

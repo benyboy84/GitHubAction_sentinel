@@ -226,4 +226,14 @@ Sentinel files are incorrectly formatted:
   fi
 fi
 
-exit $exit_code 
+# Exit with the result based on the `check`property
+echo "exitcode=$exit_code" >> $GITHUB_OUTPUT
+if [[ $INPUT_CHECK == true ]]; then
+    exit ${exit_code}
+else
+    if [[ $exit_code -eq 1 ]]; then
+        exit 1
+    else 
+        exit 0
+    fi
+fi
