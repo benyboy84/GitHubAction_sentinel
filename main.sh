@@ -46,16 +46,15 @@ fi
 url="https://releases.hashicorp.com/sentinel/${version}/sentinel_${version}_linux_amd64.zip"
 
 echo "INFO     | Downloading Sentinel v${version}."
-curl -s -S -L -o "/tmp/sentinel_${version}" "${url}"
-if [ "${?}" -ne 0 ]; then
+if ! curl -s -S -L -o "/tmp/sentinel_${version}" "${url}"; then
   echo "ERROR    | Failed to download Sentinel v${version}."
   exit 1
 fi
 echo "INFO     | Successfully downloaded Sentinel v${version}."
 
 echo "INFO     | Unzipping Sentinel v${version}."
-unzip -d /usr/local/bin /tmp/sentinel_${version} &> /dev/null
-if [ "${?}" -ne 0 ]; then
+
+if ! unzip -d "/usr/local/bin /tmp/sentinel_${version}" &> /dev/null; then
   echo "ERROR    | Failed to unzip Sentinel v${version}."
   exit 1
 fi
@@ -66,7 +65,7 @@ fmt_parse_error=()
 fmt_check_error=()
 policies=$(find . -maxdepth 1 -name "*.sentinel")
 for file in ${policies}; do
-  basename="$(basename ${file})"
+  basename="$(basename "${file}")"
   echo "INFO     | Checking if Sentinel files ${basename} is correctly formatted."
   fmt_output=$(sentinel fmt -check=true -write=false ${basename} 2>&1)
   exit_code=${?}
