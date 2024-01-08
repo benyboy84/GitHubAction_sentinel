@@ -26,7 +26,7 @@ working_dir="."
 if [[ -n "${INPUT_WORKING_DIR}" ]]; then
     if [[ -d "${INPUT_WORKING_DIR}" || -f "${INPUT_WORKING_DIR}" ]]; then
         working_dir=${INPUT_WORKING_DIR}
-        cd "${working_dir}"
+        cd "${working_dir}" || exit
     else
         echo "ERROR    | Working directory does not exist: \"${INPUT_WORKING_DIR}\"."
         exit 1
@@ -46,7 +46,7 @@ fi
 url="https://releases.hashicorp.com/sentinel/${version}/sentinel_${version}_linux_amd64.zip"
 
 echo "INFO     | Downloading Sentinel v${version}."
-curl -s -S -L -o "/tmp/sentinel_${version}"" "${url}"
+curl -s -S -L -o "/tmp/sentinel_${version}" "${url}"
 if [ "${?}" -ne 0 ]; then
   echo "ERROR    | Failed to download Sentinel v${version}."
   exit 1
