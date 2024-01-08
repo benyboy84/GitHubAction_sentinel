@@ -125,7 +125,7 @@ fi
 # Adding comment to pull request.
 if [[ ${INPUT_COMMENT} == true ]]; then
   # Creating pull request comment.
-  pr_comment="### GitHub Action Sentinel Format"
+  pr_comment="### Sentinel Format"
   if [[ ${#fmt_parse_error[@]} -ne 0 ]]; then
     pr_comment="${pr_comment}
 Failed to parse Sentinel files:
