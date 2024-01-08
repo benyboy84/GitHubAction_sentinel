@@ -67,7 +67,7 @@ policies=$(find . -maxdepth 1 -name "*.sentinel")
 for file in ${policies}; do
   basename="$(basename "${file}")"
   echo "INFO     | Checking if Sentinel files ${basename} is correctly formatted."
-  sentinel fmt -check=true -write=false "${basename}" 2>&1
+  sentinel fmt -check=true -write=false "${basename}" >/dev/null
   exit_code=${?}
   # Exit code of 0 indicates success.
   if [ ${exit_code} -eq 0 ]; then
@@ -104,7 +104,7 @@ if [[ ${INPUT_CHECK} == false && ${#fmt_check_error[@]} -ne 0 && ${#fmt_parse_er
   echo "INFO     | Sentinel file(s) are being formatted."
   for file in "${fmt_check_error[@]}"; do
     echo "INFO     | Formatting Sentinel file ${file}"
-    sentinel fmt -check=false -write=true "${file}" 2>&1
+    sentinel fmt -check=false -write=true "${file}" >/dev/null
     fmt_exit_code=${?}
     if [[ ${fmt_exit_code} -ne 0 ]]; then
       echo "ERROR    | Failed to format file ${file}."

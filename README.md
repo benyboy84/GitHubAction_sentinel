@@ -6,19 +6,19 @@ This action uses the `sentinel fmt` command to check that all Sentinel files in 
 
 The output of the actions can be viewed from the Actions tab in the main repository view. If the actions are executed on a pull request event, a comment may be posted on the pull request.
 
-# Success Criteria
+## Success Criteria
 
 An exit code of `0` is considered a successful execution.
 
 ## Inputs
 
 * `check`
-    
+
   By default, fmt checks if the input is properly formatted. If you set it to false, code will be formated in a canonical format.
 
-  - Type: boolean
-  - Optional
-  - Default: true
+  * Type: boolean
+  * Optional
+  * Default: true
 
   ```yaml
   with:
@@ -29,9 +29,9 @@ An exit code of `0` is considered a successful execution.
 
   The Sentinel version to install and execute. If set to `latest`, the latest stable version will be used.
 
-  - type: string
-  - Optional
-  - Default: latest
+  * type: string
+  * Optional
+  * Default: latest
 
   ```yaml
   with:
@@ -42,9 +42,9 @@ An exit code of `0` is considered a successful execution.
 
   Whether or not to comment on GitHub pull requests. Defaults to `true`.
 
-  - type: boolean
-  - Optional
-  - Default: true
+  * type: boolean
+  * Optional
+  * Default: true
 
   ```yaml
   with:
@@ -55,9 +55,9 @@ An exit code of `0` is considered a successful execution.
 
   The working directory to change into before executing Sentinel subcommands. Defaults to `.` which means use the root of the GitHub repository.
 
-  - type: string
-  - Optional
-  - Default: '.'
+  * type: string
+  * Optional
+  * Default: '.'
 
   ```yaml
   with:
