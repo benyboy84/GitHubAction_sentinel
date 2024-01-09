@@ -12,14 +12,22 @@ inputs:
     description: "Sentinel version to install."
     required: false
     default: latest
+    type: string
   comment:
     description: "Whether or not to comment on pull requests."
     required: false
     default: true
+    type: bool
   working_dir:
     description: "Sentinel working directory."
     required: false
     default: "."
+    type: string
+
+outputs:
+  exitcode:
+    description: 'The exit code of the Sentinel fmt command.'
+    value: ${{ steps.bashscript.outputs.exitcode }}
 
 runs:
   using: "composite"

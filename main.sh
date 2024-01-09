@@ -26,7 +26,7 @@ working_dir="."
 if [[ -n "${INPUT_WORKING_DIR}" ]]; then
     if [[ -d "${INPUT_WORKING_DIR}" || -f "${INPUT_WORKING_DIR}" ]]; then
         working_dir=${INPUT_WORKING_DIR}
-        cd ${working_dir}
+        cd "${working_dir}" || exit
     else
         echo "ERROR    | Working directory does not exist: \"${INPUT_WORKING_DIR}\"."
         exit 1
@@ -46,16 +46,15 @@ fi
 url="https://releases.hashicorp.com/sentinel/${version}/sentinel_${version}_linux_amd64.zip"
 
 echo "INFO     | Downloading Sentinel v${version}."
-curl -s -S -L -o /tmp/sentinel_${version} ${url}
-if [ "${?}" -ne 0 ]; then
+if ! curl -s -S -L -o "/tmp/sentinel_${version}" "${url}"; then
   echo "ERROR    | Failed to download Sentinel v${version}."
   exit 1
 fi
 echo "INFO     | Successfully downloaded Sentinel v${version}."
 
 echo "INFO     | Unzipping Sentinel v${version}."
-unzip -d /usr/local/bin /tmp/sentinel_${version} &> /dev/null
-if [ "${?}" -ne 0 ]; then
+
+if ! unzip -d /usr/local/bin "/tmp/sentinel_${version}" &> /dev/null; then
   echo "ERROR    | Failed to unzip Sentinel v${version}."
   exit 1
 fi
@@ -66,9 +65,9 @@ fmt_parse_error=()
 fmt_check_error=()
 policies=$(find . -maxdepth 1 -name "*.sentinel")
 for file in ${policies}; do
-  basename="$(basename ${file})"
+  basename="$(basename "${file}")"
   echo "INFO     | Checking if Sentinel files ${basename} is correctly formatted."
-  fmt_output=$(sentinel fmt -check=true -write=false ${basename} 2>&1)
+  sentinel fmt -check=true -write=false "${basename}" >/dev/null
   exit_code=${?}
   # Exit code of 0 indicates success.
   if [ ${exit_code} -eq 0 ]; then
@@ -103,16 +102,16 @@ fmt_format_error=()
 fmt_format_success=()
 if [[ ${INPUT_CHECK} == false && ${#fmt_check_error[@]} -ne 0 && ${#fmt_parse_error[@]} -eq 0 ]]; then
   echo "INFO     | Sentinel file(s) are being formatted."
-  for file in ${fmt_check_error}; do
+  for file in "${fmt_check_error[@]}"; do
     echo "INFO     | Formatting Sentinel file ${file}"
-    fmt_output=$(sentinel fmt -check=false -write=true ${file} 2>&1)
+    sentinel fmt -check=false -write=true "${file}" >/dev/null
     fmt_exit_code=${?}
     if [[ ${fmt_exit_code} -ne 0 ]]; then
       echo "ERROR    | Failed to format file ${file}."
-      fmt_format_error+=(${file})
+      fmt_format_error+=("${file}")
     else
       echo "INFO     | Sentinel file v${file} has been formatted."
-      fmt_format_success+=(${file})
+      fmt_format_success+=("${file}")
     fi
   done
   # Validating errors.
@@ -133,7 +132,7 @@ Failed to parse Sentinel files:
 <p>
 
 \`\`\`diff"
-    for file in ${fmt_parse_error}; do
+    for file in "${fmt_parse_error[@]}"; do
       pr_comment="${pr_comment}
 ${file}"
     done
@@ -150,7 +149,7 @@ Failed to format Sentinel files:
 <p>
 
 \`\`\`diff"
-        for file in ${fmt_format_error}; do
+        for file in "${fmt_format_error[@]}"; do
           pr_comment="${pr_comment}
     ${file}"
         done
@@ -166,7 +165,7 @@ The following files have been formatted:
 <p>
 
 \`\`\`diff"
-        for file in ${fmt_format_success}; do
+        for file in "${fmt_format_success[@]}"; do
           pr_comment="${pr_comment}
     ${file}"
         done
@@ -183,7 +182,7 @@ Sentinel files are incorrectly formatted:
 <p>
 
 \`\`\`diff"
-        for file in ${fmt_check_error}; do
+        for file in "${fmt_check_error[@]}"; do
           pr_comment="${pr_comment}
     ${file}"
         done
@@ -226,4 +225,14 @@ Sentinel files are incorrectly formatted:
   fi
 fi
 
-exit $exit_code 
+# Exit with the result based on the `check`property
+echo "exitcode=$exit_code" >> "$GITHUB_OUTPUT"
+if [[ $INPUT_CHECK == true ]]; then
+    exit ${exit_code}
+else
+    if [[ $exit_code -eq 1 ]]; then
+        exit 1
+    else 
+        exit 0
+    fi
+fi

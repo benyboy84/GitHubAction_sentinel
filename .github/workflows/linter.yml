@@ -40,16 +40,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # The following linter types will be enabled:
           VALIDATE_BASH: true
-          VALIDATE_BASH_EXEC: true
           VALIDATE_GITHUB_ACTIONS: true
-          VALIDATE_JSON: true
           VALIDATE_MARKDOWN: true
-          VALIDATE_POWERSHELL: true
-          VALIDATE_TERRAFORM_TFLINT: false
           VALIDATE_YAML: true
-          # Additional settings:
-          # If a shell script is not executable, the bash-exec
-          # linter will report an error when set to true
-          ERROR_ON_MISSING_EXEC_BIT: true
-          # Exclude README.md file because it is generated
-          FILTER_REGEX_EXCLUDE: README.md

@@ -1,24 +1,24 @@
-# Sentinel GitHub Actions
+# Sentinel Format (fmt) action
 
-Sentinel GitHub Actions allow you to execute Sentinel commands within GitHub Actions.
+This is one of a suite of Sentinel related actions.
+
+This action uses the `sentinel fmt` command to check that all Sentinel files in a directory are in the canonical format. This can be used to check that files are properly formatted before merging.
 
 The output of the actions can be viewed from the Actions tab in the main repository view. If the actions are executed on a pull request event, a comment may be posted on the pull request.
 
-Sentinel GitHub Actions are a single GitHub Action that executes different Sentinel subcommands depending on the content of the GitHub Actions YAML file.
-
-# Success Criteria
+## Success Criteria
 
 An exit code of `0` is considered a successful execution.
 
 ## Inputs
 
 * `check`
-    
+
   By default, fmt checks if the input is properly formatted. If you set it to false, code will be formated in a canonical format.
 
-  - Type: boolean
-  - Optional
-  - Default: true
+  * Type: boolean
+  * Optional
+  * Default: true
 
   ```yaml
   with:
@@ -29,9 +29,9 @@ An exit code of `0` is considered a successful execution.
 
   The Sentinel version to install and execute. If set to `latest`, the latest stable version will be used.
 
-  - type: string
-  - Optional
-  - Default: latest
+  * type: string
+  * Optional
+  * Default: latest
 
   ```yaml
   with:
@@ -42,9 +42,9 @@ An exit code of `0` is considered a successful execution.
 
   Whether or not to comment on GitHub pull requests. Defaults to `true`.
 
-  - type: boolean
-  - Optional
-  - Default: true
+  * type: boolean
+  * Optional
+  * Default: true
 
   ```yaml
   with:
@@ -55,20 +55,26 @@ An exit code of `0` is considered a successful execution.
 
   The working directory to change into before executing Sentinel subcommands. Defaults to `.` which means use the root of the GitHub repository.
 
-  - type: string
-  - Optional
-  - Default: '.'
+  * type: string
+  * Optional
+  * Default: '.'
 
   ```yaml
   with:
     working_dir: ./policies
   ```
 
+## Outputs
+
+* `exitcode`
+
+  The exit code of the Sentinel fmt command.
+
 ## Environment Variables
 
 * `GITHUB_TOKEN`
 
-  The GitHub authorization token to use to add a comment to a PR. 
+  The GitHub authorization token to use to add a comment to a PR.
   The token provided by GitHub Actions can be used - it can be passed by
   using the `${{ secrets.GITHUB_TOKEN }}` expression, e.g.
 
@@ -83,7 +89,7 @@ An exit code of `0` is considered a successful execution.
 
 ## Example usage
 
-The most common workflow is to run `sentinel fmt`, `sentinel test` on all of the Sentinel files in the root of the repository when a pull request is opened or updated. A comment will be posted to the pull request depending on the output of the Sentinel subcommand being executed. This workflow can be configured by adding the following content to the GitHub Actions workflow YAML file.
+The most common workflow is to run `sentinel fmt` on all of the Sentinel files in the root of the repository when a pull request is opened or updated. A comment will be posted to the pull request depending on the output. This workflow can be configured by adding the following content to the GitHub Actions workflow YAML file.
 
 ```yaml
 name: 'Sentinel GitHub Actions'
@@ -99,17 +105,10 @@ jobs:
       - name: 'Checkout'
         uses: actions/checkout@master
       - name: 'Sentinel Format'
-        uses: benyboy84/GitHubAction_Sentinel@v1
+        uses: benyboy84/GitHubAction_sentinel-fmt@v1
         with:
           version: latest
-          command: 'fmt'
-          working_dir: '.'
-          comment: true
-      - name: 'Sentinel Test'
-        uses: benyboy84/GitHubAction_Sentinel@v1
-        with:
-          version: latest
-          command: 'test'
-          working_dir: '.'
+          check: false
+          working_dir: "./policies"
           comment: true
 ```
