@@ -68,14 +68,7 @@ public discourse.
 
     Additionally, don't share sensitive information. This includes your own email address.
     We don't allow the sharing of such information in GitHub Community, as it can create
-    security and privacy risks for the poster, as well as other users. If you'd like to
-    invite other GitHub users to collaborate on a project or work with you, share a link
-    to the repository in which the project you are working on exists. By sharing the link
-    to your project repo - with some information on what your project is and what kind of
-    help or feedback you're looking for - you can invite others to collaborate with you via
-    issues or pull requests without having to share your private information. You can also
-    add others as outside collaborators on your project repo to give them special permissions
-    to help you develop your project.
+    security and privacy risks for the poster, as well as other users.
 
   * **Keep it tidy**. Make the effort to put things in the right place, so that we can spend
     more time discussing and less time cleaning up. So:
@@ -96,15 +89,22 @@ public discourse.
 
 ## Our Responsibilities
 
-Project maintainers are responsible for clarifying the standards of acceptable
-behavior and are expected to take appropriate and fair corrective action in
-response to any instances of unacceptable behavior.
+There are a variety of actions that we may take in response to inappropriate behavior
+or content. It usually depends on the exact circumstances of a particular case. We
+recognize that sometimes people may say or do inappropriate things for any number of
+reasons. Perhaps they did not realize how their words would be perceived. Or maybe
+they just let their emotions get the best of them. Of course, sometimes, there are
+folks who just want to spam or cause trouble.
 
-Project maintainers have the right and responsibility to remove, edit, or
-reject comments, commits, code, wiki edits, issues, and other contributions
-that are not aligned to this Code of Conduct, or to ban temporarily or
-permanently any contributor for other behaviors that they deem inappropriate,
-threatening, offensive, or harmful.
+Each case requires a different approach, and we try to tailor our response to meet
+the needs of the situation. We'll review each situation on a case-by-case basis.
+
+Actions we may take in response to a flag or abuse report include, but are not
+limited to:
+* remove, edit, or reject comments, commits, code, wiki edits, issues, and
+  other contributions that are not aligned to this Code of Conduct
+* ban temporarily or permanently any contributor for other behaviors that
+  they deem inappropriate, threatening, offensive, or harmful
 
 ## Scope
 
@@ -117,20 +117,6 @@ further defined and clarified by project maintainers.
 
 ## Enforcement
 
-Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported by contacting the project team at {{ email }}. All
-complaints will be reviewed and investigated and will result in a response that
-is deemed necessary and appropriate to the circumstances. The project team is
-obligated to maintain confidentiality with regard to the reporter of an incident.
-Further details of specific enforcement policies may be posted separately.
-
 Project maintainers who do not follow or enforce the Code of Conduct in good
 faith may face temporary or permanent repercussions as determined by other
 members of the project's leadership.
-
-## Attribution
-
-This Code of Conduct is adapted from the [Contributor Covenant][homepage], version 1.4,
-available at https://www.contributor-covenant.org/version/1/4/code-of-conduct.html
-
-[homepage]: https://www.contributor-covenant.org
