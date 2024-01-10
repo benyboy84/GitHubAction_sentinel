@@ -70,17 +70,21 @@ for file in ${policies}; do
   sentinel fmt -check=true -write=false "${basename}" >/dev/null
   exit_code=${?}
   # Exit code of 0 indicates success.
-  if [ ${exit_code} -eq 0 ]; then
+  if [[ ${exit_code} -eq 0 ]]; then
     echo "INFO     | Sentinel file in ${basename} is correctly formatted."
   fi
   # Exit code of 1 indicates a parse error.
-  if [ ${exit_code} -eq 1 ]; then
+  if [[ ${exit_code} -eq 1 ]]; then
     echo "ERROR    | Failed to parse Sentinel file ${basename}."
     fmt_parse_error+=("${basename}")
   fi
   # Exit code of 2 indicates that file is incorrectly formatted.
-  if [ ${exit_code} -eq 2 ]; then
-    echo "ERROR    | Sentinel file ${basename} is incorrectly formatted."
+  if [[ ${exit_code} -eq 2 ]]; then
+    if [[ ${INPUT_CHECK} == false ]]; then
+      echo "WARNING  | Sentinel file ${basename} is incorrectly formatted."
+    else
+      echo "ERROR    | Sentinel file ${basename} is incorrectly formatted."
+    fi
     fmt_check_error+=("${basename}")
   fi
 done
