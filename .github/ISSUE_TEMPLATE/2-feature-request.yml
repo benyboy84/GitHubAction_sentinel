@@ -11,7 +11,9 @@ body:
     id: description
     attributes:
       label: Description
-      description: Provide a brief description of your feature request.
+      description: |
+        Provide a brief description of your feature request.
+        test
     validations:
       required: true
   - type: textarea
