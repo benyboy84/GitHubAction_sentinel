@@ -42,16 +42,19 @@ public discourse.
   * **Improve the discussion**. Help us make this a great place for discussion by
     always working to improve the discussion in some way, however small. If you are
     not sure your post adds to the conversation, think over what you want to say and
-    try again later.<br>
-    
+    try again later.
+
+
     The topics discussed here matter to us, and we want you to act as if they matter
     to you, too. Be respectful of the topics and the people discussing them, even if
-    you disagree with some of what is being said.<br>
-    
+    you disagree with some of what is being said.
+
+
   * **Be clear and stay on topic**. GitHub Community is for collaboration, sharing
     ideas, and helping each other get stuff done. Off-topic comments are a distraction
     (sometimes welcome, but usually not) from getting work done and being productive.
-    Staying on topic helps produce positive and productive discussions.<br>
+    Staying on topic helps produce positive and productive discussions.
+
 
     This applies to sharing links, as well. Any links shared in GitHub Community
     discussions should be shared with the intent of providing relevant and appropriate
@@ -59,12 +62,14 @@ public discourse.
     site. Links should always be accompanied by a full explanation of the content and
     purpose of the link. Posting links, especially unsolicited ones, without relevant
     and valuable context can come across as advertising or serving even more malicious
-    purposes.<br>
+    purposes.
+
 
   * **Share mindfully**. When asking others to give you feedback or collaborate on a
     project, only share valuable and relevant resources to provide context. Don't post
     links that don't add value to the discussion, and don't post unsolicited links to
-    your own projects or sites on other user's threads.<br>
+    your own projects or sites on other user's threads.
+  
 
     Additionally, don't share sensitive information. This includes your own email address.
     We don't allow the sharing of such information in GitHub Community, as it can create
@@ -101,6 +106,7 @@ the needs of the situation. We'll review each situation on a case-by-case basis.
 
 Actions we may take in response to a flag or abuse report include, but are not
 limited to:
+
 * remove, edit, or reject comments, commits, code, wiki edits, issues, and
   other contributions that are not aligned to this Code of Conduct
 * ban temporarily or permanently any contributor for other behaviors that
