@@ -29,9 +29,9 @@ body:
         Provide a description of your preferred solution.
         
         This can include:
-        * Details of the technical implementation
-        * Tradeoffs made in design decisions
-        * Caveats and considerations for the future
+          * Details of the technical implementation
+          * Tradeoffs made in design decisions
+          * Caveats and considerations for the future
     validations:
       required: false
   - type: checkboxes
