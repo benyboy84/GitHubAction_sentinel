@@ -49,12 +49,10 @@ public discourse.
     to you, too. Be respectful of the topics and the people discussing them, even if
     you disagree with some of what is being said.
 
-
   * **Be clear and stay on topic**. GitHub Community is for collaboration, sharing
     ideas, and helping each other get stuff done. Off-topic comments are a distraction
     (sometimes welcome, but usually not) from getting work done and being productive.
     Staying on topic helps produce positive and productive discussions.
-
 
     This applies to sharing links, as well. Any links shared in GitHub Community
     discussions should be shared with the intent of providing relevant and appropriate
@@ -63,7 +61,6 @@ public discourse.
     purpose of the link. Posting links, especially unsolicited ones, without relevant
     and valuable context can come across as advertising or serving even more malicious
     purposes.
-
 
   * **Share mindfully**. When asking others to give you feedback or collaborate on a
     project, only share valuable and relevant resources to provide context. Don't post
