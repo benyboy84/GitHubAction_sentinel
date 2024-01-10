@@ -31,10 +31,10 @@ body:
   - type: markdown
     attributes:
       value: |
-        This can include:
-        * Details of the technical implementation
-        * Tradeoffs made in design decisions
-        * Caveats and considerations for the future
+        ###### This can include:
+        ###### * Details of the technical implementation
+        ###### * Tradeoffs made in design decisions
+        ###### * Caveats and considerations for the future
   - type: checkboxes
     id: terms
     attributes:
