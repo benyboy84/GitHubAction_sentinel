@@ -69,24 +69,25 @@ for file in ${policies}; do
   echo "INFO     | Checking if Sentinel files ${basename} is correctly formatted."
   sentinel fmt -check=true -write=false "${basename}" >/dev/null
   exit_code=${?}
-  # Exit code of 0 indicates success.
-  if [[ ${exit_code} -eq 0 ]]; then
-    echo "INFO     | Sentinel file in ${basename} is correctly formatted."
-  fi
-  # Exit code of 1 indicates a parse error.
-  if [[ ${exit_code} -eq 1 ]]; then
-    echo "ERROR    | Failed to parse Sentinel file ${basename}."
-    fmt_parse_error+=("${basename}")
-  fi
-  # Exit code of 2 indicates that file is incorrectly formatted.
-  if [[ ${exit_code} -eq 2 ]]; then
-    if [[ ${INPUT_CHECK} == false ]]; then
-      echo "WARNING  | Sentinel file ${basename} is incorrectly formatted."
-    else
-      echo "ERROR    | Sentinel file ${basename} is incorrectly formatted."
-    fi
-    fmt_check_error+=("${basename}")
-  fi
+  case ${exit_code} in 
+    0)
+      # Exit code of 0 indicates success.
+      echo "INFO     | Sentinel file in ${basename} is correctly formatted."
+      ;; 
+    1)
+      # Exit code of 1 indicates a parse error.
+      echo "ERROR    | Failed to parse Sentinel file ${basename}."
+      fmt_parse_error+=("${basename}")
+      ;; 
+    2)
+      if [[ ${INPUT_CHECK} == false ]]; then
+        echo "WARNING  | Sentinel file ${basename} is incorrectly formatted."
+      else
+        echo "ERROR    | Sentinel file ${basename} is incorrectly formatted."
+      fi
+      fmt_check_error+=("${basename}")
+      ;;
+  esac
 done
 
 # Validating errors.
