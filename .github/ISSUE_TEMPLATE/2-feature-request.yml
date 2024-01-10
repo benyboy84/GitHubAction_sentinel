@@ -27,6 +27,7 @@ body:
       label: Solution
       description: |
         Provide a description of your preferred solution.
+        
         This can include:
         * Details of the technical implementation
         * Tradeoffs made in design decisions
