@@ -44,7 +44,6 @@ public discourse.
     not sure your post adds to the conversation, think over what you want to say and
     try again later.
 
-
     The topics discussed here matter to us, and we want you to act as if they matter
     to you, too. Be respectful of the topics and the people discussing them, even if
     you disagree with some of what is being said.
@@ -67,7 +66,6 @@ public discourse.
     links that don't add value to the discussion, and don't post unsolicited links to
     your own projects or sites on other user's threads.
   
-
     Additionally, don't share sensitive information. This includes your own email address.
     We don't allow the sharing of such information in GitHub Community, as it can create
     security and privacy risks for the poster, as well as other users.
