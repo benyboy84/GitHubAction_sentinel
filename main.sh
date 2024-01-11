@@ -236,12 +236,12 @@ Sentinel files are incorrectly formatted:
             pr_comment_uri=$(jq -r ".repository.issue_comment_url" "${GITHUB_EVENT_PATH}" | sed "s|{/number}||g")
             pr_comment_id=$(curl -sS -H "${auth_header}" -H "${accept_header}" -L "${pr_comments_url}" | jq '.[] | select(.body|test ("### Sentinel Format")) | .id')
             if [ "${pr_comment_id}" ]; then
-              echo "${pr_comment_id[@]}"
+              echo "${pr_comment_id}"
 
-if [[ "$(declare -p ${pr_comment_id[@]})" =~ "declare -a" ]]; then
-    echo array
+if (( $(grep -c . <<<"${pr_comment_id}") > 1 )); then
+  echo VAR has more than one line
 else
-    echo no array
+  echo VAR has at most one line
 fi
 
               if [[ $(IS_ARRAY ${pr_comment_id[@]}) -ne 0 ]]; then
