@@ -71,13 +71,13 @@ fmt_check_success=()
 policies=$(find . -maxdepth 1 -name "*.sentinel")
 for file in ${policies}; do
   basename="$(basename "${file}")"
-  echo "INFO     | Checking if Sentinel files ${basename} is correctly formatted."
+  echo "INFO     | Checking if Sentinel files ${basename} is properly formatted."
   sentinel fmt -check=true -write=false "${basename}" >/dev/null
   exit_code=${?}
   case ${exit_code} in 
     0)
       # Exit code of 0 indicates success.
-      echo "INFO     | Sentinel file in ${basename} is correctly formatted."
+      echo "INFO     | Sentinel file in ${basename} is properly formatted."
       fmt_check_success+=("${basename}")
       ;; 
     1)
@@ -87,26 +87,14 @@ for file in ${policies}; do
       ;; 
     2)
       if [[ ${INPUT_CHECK} == false ]]; then
-        echo "WARNING  | Sentinel file ${basename} is incorrectly formatted."
+        echo "WARNING  | Sentinel file ${basename} is improperly formatted."
       else
-        echo "ERROR    | Sentinel file ${basename} is incorrectly formatted."
+        echo "ERROR    | Sentinel file ${basename} is improperly formatted."
       fi
       fmt_check_error+=("${basename}")
       ;;
   esac
 done
-
-# # Validating errors.
-# if [[ ${#fmt_parse_error[@]} -ne 0 ]]; then
-#   # 'fmt_parse_error' not empty indicates a parse error.
-#   exit_code=1
-# elif [[ ${#fmt_check_error[@]} -ne 0 ]]; then
-#   # 'fmt_check_error' not empty indicates that file is incorrectly formatted.
-#   exit_code=2
-# else
-#   # 'fmt_parse_error' and 'fmt_check_error' empty indicates that success.
-#   exit_code=0
-# fi
 
 # Gather the output of `sentinel fmt -check=false -write=true`.
 fmt_format_error=()
@@ -125,11 +113,6 @@ if [[ ${INPUT_CHECK} == false && ${#fmt_check_error[@]} -ne 0 ]]; then
       fmt_format_success+=("${file}")
     fi
   done
-  # Validating errors.
-  if [[ ${#fmt_format_error[@]} -ne 0 ]]; then
-    # 'fmt_format_error' not empty indicates a formatting error.
-    exit_code=1
-  fi
 fi
 
 # Adding comment to pull request.
@@ -184,12 +167,12 @@ ${file}"
       pr_comment="${pr_comment}
 \`\`\`
 </p>
-</details><br>"
+</details>"
     fi
   else
     if [[ ${#fmt_check_error[@]} -ne 0 ]]; then
       pr_comment="${pr_comment}
-The following files are incorrectly formatted:
+The following files are improperly formatted:
 <details><summary><code>Show Output</code></summary>
 <p>
 
@@ -274,13 +257,36 @@ ${file}"
 fi
 
 # Exit with the result based on the `check`property
-echo "exitcode=${exit_code}" >> "${GITHUB_OUTPUT}"
-if [[ ${INPUT_CHECK} == true ]]; then
-  exit ${exit_code}
+if [[ ${#fmt_parse_error[@]} -ne 0 ]]; then
+  # 'fmt_parse_error' not empty indicates a parse error.
+  exit_code=1
+elif [[ ${#fmt_check_error[@]} -ne 0 ]]; then
+  # 'fmt_check_error' not empty indicates that file is improperly formatted.
+  if [[ ${INPUT_CHECK} == true ]]; then
+    if [[ ${#fmt_format_error[@]} -ne 0 ]]; then
+      # 'fmt_format_error' not empty indicates a formatting error.
+      exit_code=1
+    else
+      # 'fmt_format_error' empty indicates have been formatted properly.
+      exit_code=2
+    fi
+  else
+    exit_code=2
+  fi
 else
-  if [[ ${exit_code} -eq 1 ]]; then
-    exit 1
-  else 
+  # 'fmt_parse_error' and 'fmt_check_error' empty indicates that success.
+  exit_code=0
+fi
+
+echo "exitcode=${exit_code}" >> "${GITHUB_OUTPUT}"
+
+# Exit with the result based on the `check`property
+if [[ ${INPUT_CHECK} == true ]]; then
+    exit $exit_code
+else
+  if [[ ${exit_code} -eq 2 ]]; then
     exit 0
+  else 
+    exit 1
   fi
 fi
