@@ -7,7 +7,7 @@ echo "INFO     | Executing Sentinel command to format code policies."
 IS_ARRAY()
 {   # Detect if arg is an array, returns 0 on sucess, 1 otherwise
     [ -z "$1" ] && return 1
-    echo "$1"
+    echo "${1}"
     if [ -n "$BASH" ]; then
         declare -p ${1} 2> /dev/null | grep 'declare \-a' >/dev/null && return 0
     fi
