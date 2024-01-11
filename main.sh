@@ -235,19 +235,21 @@ Sentinel files are incorrectly formatted:
             pr_comment_uri=$(jq -r ".repository.issue_comment_url" "${GITHUB_EVENT_PATH}" | sed "s|{/number}||g")
             pr_comment_id=$(curl -sS -H "${auth_header}" -H "${accept_header}" -L "${pr_comments_url}" | jq '.[] | select(.body|test ("### Sentinel Format")) | .id')
             if [ "${pr_comment_id}" ]; then
-                if [[ $(IS_ARRAY ${pr_comment_id})  -ne 0 ]]; then
-                    echo "INFO     | Found existing pull request comment: ${pr_comment_id}. Deleting."
-                    pr_comment_url="${pr_comment_uri}/${pr_comment_id}"
-                    {
-                        curl -sS -X DELETE -H "${auth_header}" -H "${accept_header}" -L "${pr_comment_url}" > /dev/null
-                    } ||
-                    {
-                        echo "ERROR    | Unable to delete existing comment in pull request."
-                    }
-                else
-                    echo "WARNING  | Pull request contain many comments with \"### Sentinel Format\" in the body."
-                    echo "WARNING  | Existing pull request comments won't be delete."
-                fi
+              echo "${pr_comment_id}"
+              echo $(IS_ARRAY ${pr_comment_id})
+              if [[ $(IS_ARRAY ${pr_comment_id})  -ne 0 ]]; then
+                  echo "INFO     | Found existing pull request comment: ${pr_comment_id}. Deleting."
+                  pr_comment_url="${pr_comment_uri}/${pr_comment_id}"
+                  {
+                      curl -sS -X DELETE -H "${auth_header}" -H "${accept_header}" -L "${pr_comment_url}" > /dev/null
+                  } ||
+                  {
+                      echo "ERROR    | Unable to delete existing comment in pull request."
+                  }
+              else
+                  echo "WARNING  | Pull request contain many comments with \"### Sentinel Format\" in the body."
+                  echo "WARNING  | Existing pull request comments won't be delete."
+              fi
             else
                 echo "INFO     | No existing pull request comment found."
             fi
