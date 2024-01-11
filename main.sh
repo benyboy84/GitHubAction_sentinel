@@ -237,7 +237,13 @@ Sentinel files are incorrectly formatted:
             pr_comment_id=$(curl -sS -H "${auth_header}" -H "${accept_header}" -L "${pr_comments_url}" | jq '.[] | select(.body|test ("### Sentinel Format")) | .id')
             if [ "${pr_comment_id}" ]; then
               echo "${pr_comment_id[@]}"
-              echo $(IS_ARRAY ${pr_comment_id[@]})
+
+if [[ "$(declare -p ${pr_comment_id[@]})" =~ "declare -a" ]]; then
+    echo array
+else
+    echo no array
+fi
+
               if [[ $(IS_ARRAY ${pr_comment_id[@]}) -ne 0 ]]; then
                   echo "INFO     | Found existing pull request comment: ${pr_comment_id}. Deleting..."
                   pr_comment_url="${pr_comment_uri}/${pr_comment_id}"
