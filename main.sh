@@ -238,7 +238,7 @@ Sentinel files are incorrectly formatted:
             if [ "${pr_comment_id}" ]; then
               echo "${pr_comment_id}"
               echo $(IS_ARRAY $pr_comment_id)
-              if [[ $(IS_ARRAY ${pr_comment_id}) -ne 0 ]]; then
+              if [[ $(IS_ARRAY $pr_comment_id) -ne 0 ]]; then
                   echo "INFO     | Found existing pull request comment: ${pr_comment_id}. Deleting."
                   pr_comment_url="${pr_comment_uri}/${pr_comment_id}"
                   {
