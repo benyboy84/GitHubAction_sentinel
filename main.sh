@@ -1,6 +1,17 @@
 #!/bin/bash
 
-echo "INFO     | Executing Sentinel commands to format code or test policies."
+echo "INFO     | Executing Sentinel command to format code policies."
+
+# check if variable is array, returns 0 on success, 1 otherwise
+# @param: mixed 
+IS_ARRAY()
+{   # Detect if arg is an array, returns 0 on sucess, 1 otherwise
+    [ -z "$1" ] && return 1
+    if [ -n "$BASH" ]; then
+        declare -p ${1} 2> /dev/null | grep 'declare \-a' >/dev/null && return 0
+    fi
+    return 1
+}
 
 # Validate input check.
 if [[ ! "${INPUT_CHECK}" =~ ^(true|false)$ ]]; then
@@ -18,6 +29,12 @@ fi
 # Validate input comment.
 if [[ ! "${INPUT_COMMENT}" =~ ^(true|false)$ ]]; then
     echo "ERROR    | Unsupported command \"${INPUT_COMMENT}\" for input \"comment\". Valid values are \"true\" or \"false\"."
+    exit 1
+fi
+
+# Validate input delete_comment.
+if [[ ! "${INPUT_DELETE_COMMENT}" =~ ^(true|false)$ ]]; then
+    echo "ERROR    | Unsupported command \"${INPUT_DELETE_COMMENT}\" for input \"delete_comment\". Valid values are \"true\" or \"false\"."
     exit 1
 fi
 
@@ -54,7 +71,7 @@ echo "INFO     | Successfully downloaded Sentinel v${version}."
 
 echo "INFO     | Unzipping Sentinel v${version}."
 
-if ! unzip -d /usr/local/bin "/tmp/sentinel_${version}" &> /dev/null; then
+if ! unzip -o -d /usr/local/bin "/tmp/sentinel_${version}" &> /dev/null; then
   echo "ERROR    | Failed to unzip Sentinel v${version}."
   exit 1
 fi
@@ -207,14 +224,35 @@ Sentinel files are incorrectly formatted:
           echo "WARNING  | GITHUB_TOKEN not defined. Pull request comment is not possible without a GitHub token."
       else
           accept_header="Accept: application/vnd.github.v3+json"
-          auth_header="Authorization: token $GITHUB_TOKEN"
+          auth_header="Authorization: token ${GITHUB_TOKEN}"
           content_header="Content-Type: application/json"
-          if [[ "$GITHUB_EVENT_NAME" == "issue_comment" ]]; then
-              pr_comments_url=$(jq -r ".issue.comments_url" "$GITHUB_EVENT_PATH")
+          if [[ "${GITHUB_EVENT_NAME}" == "issue_comment" ]]; then
+              pr_comments_url=$(jq -r ".issue.comments_url" "${GITHUB_EVENT_PATH}")
           else
-              pr_comments_url=$(jq -r ".pull_request.comments_url" "$GITHUB_EVENT_PATH")
+              pr_comments_url=$(jq -r ".pull_request.comments_url" "${GITHUB_EVENT_PATH}")
           fi
-          if [[ $exit_code -ne 0 ]]; then
+          if [[ "${INPUT_DELETE_COMMENT}" == true ]]; then
+            pr_comment_uri=$(jq -r ".repository.issue_comment_url" "${GITHUB_EVENT_PATH}" | sed "s|{/number}||g")
+            pr_comment_id=$(curl -sS -H "${auth_header}" -H "${accept_header}" -L "${pr_comments_url}" | jq '.[] | select(.body|test ("### Sentinel Format")) | .id')
+            if [ "${pr_comment_id}" ]; then
+                if [[ $(IS_ARRAY ${pr_comment_id})  -ne 0 ]]; then
+                    echo "INFO     | Found existing pull request comment: ${pr_comment_id}. Deleting."
+                    pr_comment_url="${pr_comment_uri}/${pr_comment_id}"
+                    {
+                        curl -sS -X DELETE -H "${auth_header}" -H "${accept_header}" -L "${pr_comment_url}" > /dev/null
+                    } ||
+                    {
+                        echo "ERROR    | Unable to delete existing comment in pull request."
+                    }
+                else
+                    echo "WARNING  | Pull request contain many comments with \"### Sentinel Format\" in the body."
+                    echo "WARNING  | Existing pull request comments won't be delete."
+                fi
+            else
+                echo "INFO     | No existing pull request comment found."
+            fi
+          fi
+          if [[ ${exit_code} -ne 0 ]]; then
               # Add comment to pull request.
               body="${pr_comment}"
               pr_payload=$(echo '{}' | jq --arg body "${body}" '.body = $body')
@@ -231,11 +269,11 @@ Sentinel files are incorrectly formatted:
 fi
 
 # Exit with the result based on the `check`property
-echo "exitcode=$exit_code" >> "$GITHUB_OUTPUT"
-if [[ $INPUT_CHECK == true ]]; then
+echo "exitcode=${exit_code}" >> "${GITHUB_OUTPUT}"
+if [[ ${INPUT_CHECK} == true ]]; then
     exit ${exit_code}
 else
-    if [[ $exit_code -eq 1 ]]; then
+    if [[ ${exit_code} -eq 1 ]]; then
         exit 1
     else 
         exit 0

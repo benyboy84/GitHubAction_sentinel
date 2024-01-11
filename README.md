@@ -4,11 +4,7 @@ This is one of a suite of Sentinel related actions.
 
 This action uses the `sentinel fmt` command to check that all Sentinel files in a directory are in the canonical format. This can be used to check that files are properly formatted before merging.
 
-The output of the actions can be viewed from the Actions tab in the main repository view. If the actions are executed on a pull request event, a comment may be posted on the pull request.
-
-## Success Criteria
-
-An exit code of `0` is considered a successful execution.
+The output of the actions can be viewed from the Actions tab in the main repository view. If the actions are executed on a pull request event, a comment can be posted on the pull request.
 
 ## Inputs
 
@@ -38,19 +34,6 @@ An exit code of `0` is considered a successful execution.
     version: latest
   ```
 
-* `comment`
-
-  Whether or not to comment on GitHub pull requests. Defaults to `true`.
-
-  * type: boolean
-  * Optional
-  * Default: true
-
-  ```yaml
-  with:
-    comment: false
-  ```
-
 * `working_dir`
 
   The working directory to change into before executing Sentinel subcommands. Defaults to `.` which means use the root of the GitHub repository.
@@ -62,6 +45,32 @@ An exit code of `0` is considered a successful execution.
   ```yaml
   with:
     working_dir: ./policies
+  ```
+
+* `comment`
+
+  Whether or not to comment on GitHub pull request. Defaults to `true`.
+
+  * type: boolean
+  * Optional
+  * Default: true
+
+  ```yaml
+  with:
+    comment: false
+  ```
+
+* `delete_comment`
+  
+  Whether or not to delete previous comment on pull request. Defaults to `true`.
+
+  * type: boolean
+  * Optional
+  * Default: true
+
+  ```yaml
+  with:
+    delete_comment: false
   ```
 
 ## Outputs
@@ -111,4 +120,5 @@ jobs:
           check: false
           working_dir: "./policies"
           comment: true
+          delete_comment: true
 ```
