@@ -7,6 +7,7 @@ echo "INFO     | Executing Sentinel command to format code policies."
 IS_ARRAY()
 {   # Detect if arg is an array, returns 0 on sucess, 1 otherwise
     [ -z "$1" ] && return 1
+    echo "$1"
     if [ -n "$BASH" ]; then
         declare -p ${1} 2> /dev/null | grep 'declare \-a' >/dev/null && return 0
     fi
@@ -236,8 +237,8 @@ Sentinel files are incorrectly formatted:
             pr_comment_id=$(curl -sS -H "${auth_header}" -H "${accept_header}" -L "${pr_comments_url}" | jq '.[] | select(.body|test ("### Sentinel Format")) | .id')
             if [ "${pr_comment_id}" ]; then
               echo "${pr_comment_id}"
-              echo $(IS_ARRAY ${pr_comment_id})
-              if [[ $(IS_ARRAY ${pr_comment_id})  -ne 0 ]]; then
+              echo $(IS_ARRAY $pr_comment_id)
+              if [[ $(IS_ARRAY ${pr_comment_id}) -ne 0 ]]; then
                   echo "INFO     | Found existing pull request comment: ${pr_comment_id}. Deleting."
                   pr_comment_url="${pr_comment_uri}/${pr_comment_id}"
                   {
