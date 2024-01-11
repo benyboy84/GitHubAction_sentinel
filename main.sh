@@ -203,22 +203,22 @@ ${file}"
 </p>
 </details>"
     fi
-    if [[ ${#fmt_check_success[@]} -ne 0 ]]; then
-      pr_comment="${pr_comment}
+  fi
+  if [[ ${#fmt_check_success[@]} -ne 0 ]]; then
+    pr_comment="${pr_comment}
 The following files are properly formatted:
 <details><summary><code>Show Output</code></summary>
 <p>
 
 \`\`\`diff"
-      for file in "${fmt_check_success[@]}"; do
-        pr_comment="${pr_comment}
-${file}"
-      done
+    for file in "${fmt_check_success[@]}"; do
       pr_comment="${pr_comment}
+${file}"
+    done
+    pr_comment="${pr_comment}
 \`\`\`
 </p>
 </details>"
-    fi
   fi
 
   #if [[ "${GITHUB_EVENT_NAME}" != "push" && "${GITHUB_EVENT_NAME}" != "pull_request" && "${GITHUB_EVENT_NAME}" != "issue_comment" && "${GITHUB_EVENT_NAME}" != "pull_request_review_comment" && "${GITHUB_EVENT_NAME}" != "pull_request_target" && "${GITHUB_EVENT_NAME}" != "pull_request_review" ]]; then
