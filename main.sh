@@ -2,18 +2,6 @@
 
 echo "INFO     | Executing Sentinel command to format code policies."
 
-# check if variable is array, returns 0 on success, 1 otherwise
-# @param: mixed 
-IS_ARRAY()
-{   # Detect if arg is an array, returns 0 on sucess, 1 otherwise
-    [ -z "$1" ] && return 1
-    echo "${1}"
-    if [ -n "$BASH" ]; then
-        declare -p ${1} 2> /dev/null | grep 'declare \-a' >/dev/null && return 0
-    fi
-    return 1
-}
-
 # Validate input check.
 if [[ ! "${INPUT_CHECK}" =~ ^(true|false)$ ]]; then
     echo "ERROR    | Unsupported command \"${INPUT_CHECK}\" for input \"check\". Valid values are \"true\" or \"false\"."
@@ -236,26 +224,18 @@ Sentinel files are incorrectly formatted:
             pr_comment_uri=$(jq -r ".repository.issue_comment_url" "${GITHUB_EVENT_PATH}" | sed "s|{/number}||g")
             pr_comment_id=$(curl -sS -H "${auth_header}" -H "${accept_header}" -L "${pr_comments_url}" | jq '.[] | select(.body|test ("### Sentinel Format")) | .id')
             if [ "${pr_comment_id}" ]; then
-              echo "${pr_comment_id}"
-
-if (( $(grep -c . <<<"${pr_comment_id}") > 1 )); then
-  echo VAR has more than one line
-else
-  echo VAR has at most one line
-fi
-
-              if [[ $(IS_ARRAY ${pr_comment_id[@]}) -ne 0 ]]; then
-                  echo "INFO     | Found existing pull request comment: ${pr_comment_id}. Deleting..."
-                  pr_comment_url="${pr_comment_uri}/${pr_comment_id}"
-                  {
-                      curl -sS -X DELETE -H "${auth_header}" -H "${accept_header}" -L "${pr_comment_url}" > /dev/null
-                  } ||
-                  {
-                      echo "ERROR    | Unable to delete existing comment in pull request."
-                  }
+              if (( $(grep -c . <<<"${pr_comment_id}") > 1 )); then
+                echo "WARNING  | Pull request contain many comments with \"### Sentinel Format\" in the body."
+                echo "WARNING  | Existing pull request comments won't be delete."
               else
-                  echo "WARNING  | Pull request contain many comments with \"### Sentinel Format\" in the body."
-                  echo "WARNING  | Existing pull request comments won't be delete."
+                echo "INFO     | Found existing pull request comment: ${pr_comment_id}. Deleting..."
+                pr_comment_url="${pr_comment_uri}/${pr_comment_id}"
+                {
+                    curl -sS -X DELETE -H "${auth_header}" -H "${accept_header}" -L "${pr_comment_url}" > /dev/null
+                } ||
+                {
+                    echo "ERROR    | Unable to delete existing comment in pull request."
+                }
               fi
             else
                 echo "INFO     | No existing pull request comment found."
