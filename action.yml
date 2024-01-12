@@ -13,16 +13,21 @@ inputs:
     required: false
     default: latest
     type: string
-  comment:
-    description: "Whether or not to comment on pull requests."
-    required: false
-    default: true
-    type: bool
   working_dir:
     description: "Sentinel working directory."
     required: false
     default: "."
     type: string
+  comment:
+    description: "Whether or not to comment on pull request."
+    required: false
+    default: true
+    type: bool
+  delete_comment:
+    description: "Whether or not to delete previous comment on pull request."
+    required: false
+    default: true
+    type: bool
 
 outputs:
   exitcode:
@@ -38,5 +43,6 @@ runs:
       env:
         INPUT_CHECK: ${{ inputs.check }}
         INPUT_VERSION: ${{ inputs.version }}
-        INPUT_COMMENT: ${{ inputs.comment }}
         INPUT_WORKING_DIR: ${{ inputs.working_dir }}
+        INPUT_COMMENT: ${{ inputs.comment }}
+        INPUT_DELETE_COMMENT: ${{ inputs.delete_comment }}
