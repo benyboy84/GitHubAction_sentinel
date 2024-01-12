@@ -81,8 +81,8 @@ The output of the actions can be viewed from the Actions tab in the main reposit
   
   * An exit code of `0` is considered a successful execution.
   * An exit code of `1` is considered a failed execution.
-  * An exit code of `2` is considered a successful file formatting.
-    <br>*You may have to consider to push your change to your referentiel with another steps.*
+  * An exit code of `2` is considered a successful file formatting.</br>
+    *You may have to consider to push your change to your referentiel with another steps.*
 
 ## Environment Variables
 
