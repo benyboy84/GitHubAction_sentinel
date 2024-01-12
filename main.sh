@@ -119,7 +119,12 @@ fi
 if [[ ${INPUT_COMMENT} == true ]]; then
 
   # Creating pull request comment.
-  pr_comment="### Sentinel Format"
+  if [[ ${#fmt_parse_error[@]} -ne 0 || (${INPUT_CHECK} == false && ${#fmt_format_error[@]} -ne 0) || (${INPUT_CHECK} == true && ${#fmt_check_error[@]} -ne 0) ]]; then
+    pr_comment="### Sentinel Format - Failed"
+  else
+    pr_comment="### Sentinel Format - Successful"
+  fi
+  
   if [[ ${#fmt_parse_error[@]} -ne 0 ]]; then
     pr_comment="${pr_comment}
 Failed to parse the following files:
