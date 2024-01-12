@@ -79,9 +79,9 @@ The output of the actions can be viewed from the Actions tab in the main reposit
 
   The exit code of the Sentinel fmt command.
   
-  - An exit code of `0` is considered a successful execution.
-  - An exit code of `1` is considered a failed execution.
-  - An exit code of `2` is considered a successful file formatting.<br>
+  * An exit code of `0` is considered a successful execution.
+  * An exit code of `1` is considered a failed execution.
+  * An exit code of `2` is considered a successful file formatting.
     *You may have to consider to push your change to your referentiel with another steps.*
 
 ## Environment Variables
