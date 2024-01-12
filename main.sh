@@ -37,6 +37,12 @@ if [[ -n "${INPUT_WORKING_DIR}" ]]; then
   fi
 fi
 
+# Validate `subdirectories`.
+if [[ ! "${INPUT_SUBDIRECTORIES}" =~ ^(true|false)$ ]]; then
+  echo "ERROR    | Unsupported command \"${INPUT_SUBDIRECTORIES}\" for input \"subdirectories\". Valid values are \"true\" or \"false\"."
+  exit 1
+fi
+
 # Validate `input comment`.
 if [[ ! "${INPUT_COMMENT}" =~ ^(true|false)$ ]]; then
   echo "ERROR    | Unsupported command \"${INPUT_COMMENT}\" for input \"comment\". Valid values are \"true\" or \"false\"."
@@ -68,7 +74,11 @@ echo "INFO     | Successfully unzipped Sentinel v${version}."
 fmt_parse_error=()
 fmt_check_error=()
 fmt_check_success=()
-policies=$(find . -maxdepth 1 -name "*.sentinel")
+if [[ ${INPUT_SUBDIRECTORIES} == true ]]; then
+  policies=$(find . -name "*.sentinel")
+else
+  policies=$(find . -maxdepth 1 -name "*.sentinel")
+fi
 for file in ${policies}; do
   basename="$(basename "${file}")"
   echo "INFO     | Checking if Sentinel files ${basename} is properly formatted."

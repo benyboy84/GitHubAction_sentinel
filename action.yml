@@ -18,6 +18,11 @@ inputs:
     required: false
     default: "."
     type: string
+  subdirectories:
+    description: "Whether or not to search for Sentinel files inside subdirectories."
+    required: false
+    default: true
+    type: bool
   comment:
     description: "Whether or not to comment on pull request."
     required: false
@@ -44,5 +49,6 @@ runs:
         INPUT_CHECK: ${{ inputs.check }}
         INPUT_VERSION: ${{ inputs.version }}
         INPUT_WORKING_DIR: ${{ inputs.working_dir }}
+        INPUT_SUBDIRECTORIES: ${{ inputs.subdirectories }}
         INPUT_COMMENT: ${{ inputs.comment }}
         INPUT_DELETE_COMMENT: ${{ inputs.delete_comment }}
