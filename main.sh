@@ -80,7 +80,7 @@ else
   policies=$(find . -maxdepth 1 -name "*.sentinel")
 fi
 for file in ${policies}; do
-  echo "INFO     | Checking if Sentinel files ${basename} is properly formatted."
+  echo "INFO     | Checking if Sentinel files ${file} is properly formatted."
   sentinel fmt -check=true -write=false "${file}" >/dev/null
   exit_code=${?}
   case ${exit_code} in 
