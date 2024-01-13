@@ -37,6 +37,12 @@ if [[ -n "${INPUT_WORKING_DIR}" ]]; then
   fi
 fi
 
+# Validate `subdirectories`.
+if [[ ! "${INPUT_SUBDIRECTORIES}" =~ ^(true|false)$ ]]; then
+  echo "ERROR    | Unsupported command \"${INPUT_SUBDIRECTORIES}\" for input \"subdirectories\". Valid values are \"true\" or \"false\"."
+  exit 1
+fi
+
 # Validate `input comment`.
 if [[ ! "${INPUT_COMMENT}" =~ ^(true|false)$ ]]; then
   echo "ERROR    | Unsupported command \"${INPUT_COMMENT}\" for input \"comment\". Valid values are \"true\" or \"false\"."
@@ -68,30 +74,33 @@ echo "INFO     | Successfully unzipped Sentinel v${version}."
 fmt_parse_error=()
 fmt_check_error=()
 fmt_check_success=()
-policies=$(find . -maxdepth 1 -name "*.sentinel")
+if [[ ${INPUT_SUBDIRECTORIES} == true ]]; then
+  policies=$(find . -name "*.sentinel" -type f -not -path '*/test/*/*')
+else
+  policies=$(find . -maxdepth 1 -name "*.sentinel")
+fi
 for file in ${policies}; do
-  basename="$(basename "${file}")"
-  echo "INFO     | Checking if Sentinel files ${basename} is properly formatted."
-  sentinel fmt -check=true -write=false "${basename}" >/dev/null
+  echo "INFO     | Checking if Sentinel files ${file} is properly formatted."
+  sentinel fmt -check=true -write=false "${file}" >/dev/null
   exit_code=${?}
   case ${exit_code} in 
     0)
       # Exit code of 0 indicates success.
-      echo "INFO     | Sentinel file in ${basename} is properly formatted."
-      fmt_check_success+=("${basename}")
+      echo "INFO     | Sentinel file in ${file} is properly formatted."
+      fmt_check_success+=("${file}")
       ;; 
     1)
       # Exit code of 1 indicates a parse error.
-      echo "ERROR    | Failed to parse Sentinel file ${basename}."
-      fmt_parse_error+=("${basename}")
+      echo "ERROR    | Failed to parse Sentinel file ${file}."
+      fmt_parse_error+=("${file}")
       ;; 
     2)
       if [[ ${INPUT_CHECK} == false ]]; then
-        echo "WARNING  | Sentinel file ${basename} is improperly formatted."
+        echo "WARNING  | Sentinel file ${file} is improperly formatted."
       else
-        echo "ERROR    | Sentinel file ${basename} is improperly formatted."
+        echo "ERROR    | Sentinel file ${file} is improperly formatted."
       fi
-      fmt_check_error+=("${basename}")
+      fmt_check_error+=("${file}")
       ;;
   esac
 done
