@@ -80,28 +80,28 @@ else
   policies=$(find . -maxdepth 1 -name "*.sentinel")
 fi
 for file in ${policies}; do
-  basename="$(basename "${file}")"
+  #basename="$(basename "${file}")"
   echo "INFO     | Checking if Sentinel files ${basename} is properly formatted."
-  sentinel fmt -check=true -write=false "${basename}" >/dev/null
+  sentinel fmt -check=true -write=false "${file}" >/dev/null
   exit_code=${?}
   case ${exit_code} in 
     0)
       # Exit code of 0 indicates success.
-      echo "INFO     | Sentinel file in ${basename} is properly formatted."
-      fmt_check_success+=("${basename}")
+      echo "INFO     | Sentinel file in ${file} is properly formatted."
+      fmt_check_success+=("${file}")
       ;; 
     1)
       # Exit code of 1 indicates a parse error.
-      echo "ERROR    | Failed to parse Sentinel file ${basename}."
-      fmt_parse_error+=("${basename}")
+      echo "ERROR    | Failed to parse Sentinel file ${file}."
+      fmt_parse_error+=("${file}")
       ;; 
     2)
       if [[ ${INPUT_CHECK} == false ]]; then
-        echo "WARNING  | Sentinel file ${basename} is improperly formatted."
+        echo "WARNING  | Sentinel file ${file} is improperly formatted."
       else
-        echo "ERROR    | Sentinel file ${basename} is improperly formatted."
+        echo "ERROR    | Sentinel file ${file} is improperly formatted."
       fi
-      fmt_check_error+=("${basename}")
+      fmt_check_error+=("${file}")
       ;;
   esac
 done
