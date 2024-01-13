@@ -46,11 +46,13 @@ The output of the actions can be viewed from the Actions tab in the main reposit
   with:
     working_dir: ./policies
   ```
+
 * `subdirectories`
 
   Whether or not to search for Sentinel files inside subdirectories.</br>
   *If `subdirectories` is set to true, Sentinel files located in a folder located in a `test` folder will be exclude because, based on the recommended directory structure, `mock` files must be place inside a directory with the same name as the policy under a `test` folder.*</br>
   *Example:*
+
   ```diff
   ./policies
   ./policies/global
