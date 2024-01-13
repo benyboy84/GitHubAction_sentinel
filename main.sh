@@ -75,7 +75,7 @@ fmt_parse_error=()
 fmt_check_error=()
 fmt_check_success=()
 if [[ ${INPUT_SUBDIRECTORIES} == true ]]; then
-  policies=$(find . -name "*.sentinel")
+  policies=$(find . -name "*.sentinel" -type f -not -path '*/test/*/')
 else
   policies=$(find . -maxdepth 1 -name "*.sentinel")
 fi
