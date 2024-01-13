@@ -25,7 +25,7 @@ The output of the actions can be viewed from the Actions tab in the main reposit
 
   The Sentinel version to install and execute. If set to `latest`, the latest stable version will be used.
 
-  * type: string
+  * Type: string
   * Optional
   * Default: latest
 
@@ -38,7 +38,7 @@ The output of the actions can be viewed from the Actions tab in the main reposit
 
   The working directory to change into before executing Sentinel subcommands. Defaults to `.` which means use the root of the GitHub repository.
 
-  * type: string
+  * Type: string
   * Optional
   * Default: '.'
 
@@ -46,12 +46,34 @@ The output of the actions can be viewed from the Actions tab in the main reposit
   with:
     working_dir: ./policies
   ```
+* `subdirectories`
+
+  Whether or not to search for Sentinel files inside subdirectories.</br>
+  *If `subdirectories` is set to true, Sentinel files located in a folder located in a `test` folder will be exclude because, based on the recommended directory structure, `mock` files must be place inside a directory with the same name as the policy under a `test` folder.*</br>
+  *Example:*
+  ```
+  ./policies
+  ./policies/global
+  ./policies/global/policy_example.sentinel
+  ./policies/global/test
+  ./policies/global/test/policy_example
+  ./policies/global/test/policy_example/mock.sentinel (excluded)
+  ```
+
+  * Type: boolean
+  * Optional
+  * Default: true
+
+  ```yaml
+  with:
+    subdirectories: false
+  ```
 
 * `comment`
 
   Whether or not to comment on GitHub pull request. Defaults to `true`.
 
-  * type: boolean
+  * Type: boolean
   * Optional
   * Default: true
 
@@ -64,7 +86,7 @@ The output of the actions can be viewed from the Actions tab in the main reposit
   
   Whether or not to delete previous comment on pull request. Defaults to `true`.
 
-  * type: boolean
+  * Type: boolean
   * Optional
   * Default: true
 
@@ -124,6 +146,7 @@ jobs:
           version: latest
           check: false
           working_dir: "./policies"
+          subdirectories: true
           comment: true
           delete_comment: true
 ```
