@@ -301,6 +301,6 @@ else
   if [[ ${exit_code} -eq 2 ]]; then
     exit 0
   else 
-    exit 1
+    exit $exit_code
   fi
 fi
